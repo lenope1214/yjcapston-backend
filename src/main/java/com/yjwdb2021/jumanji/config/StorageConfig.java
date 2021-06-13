@@ -1,9 +1,10 @@
 package com.yjwdb2021.jumanji.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 @ConfigurationProperties(prefix="storage")
-//@Configuration
+@Configuration // 이게 없으면 또 오류나네.. 전에는 잘만 됐는데
 public class StorageConfig {
     private String location;
 
