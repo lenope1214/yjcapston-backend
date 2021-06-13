@@ -27,7 +27,7 @@ public class Tab implements Serializable {
     @Column
     private char using;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     @JsonIgnore
     private Order order;

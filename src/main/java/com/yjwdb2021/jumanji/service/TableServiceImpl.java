@@ -128,4 +128,8 @@ public class TableServiceImpl implements BasicService<Tab, Tab.Request, String> 
     public void save(Tab table) {
         tableRepository.save(table);
     }
+
+    public void saveAndFlush(Tab table) {
+        tableRepository.saveAndFlush(table);
+    }
 }
