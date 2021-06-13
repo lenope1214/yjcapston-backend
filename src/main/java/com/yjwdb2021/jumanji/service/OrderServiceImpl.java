@@ -121,8 +121,8 @@ public class OrderServiceImpl implements OrderService {
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
             if(table.getOrder() != null)throw new TableAlreadUsingException();
             table.setOrder(order);
-            tableService.save(table);
             order.setTab(table);
+            tableService.saveAndFlush(table);
         }
         order = orderRepository.saveAndFlush(order);
         return order;
