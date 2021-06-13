@@ -13,9 +13,9 @@ on:
 #   pull_request:
 #     branches: [ master ]
 
-defaults:
-  run:
-      working-directory: ./jumanji
+# defaults:
+#   run:
+#       working-directory: ./jumanji
 
 jobs:
   build:
