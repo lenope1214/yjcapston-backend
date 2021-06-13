@@ -67,6 +67,7 @@ public class OrderMenu implements Serializable {
         private String orderMenuId;
         private String shopId;
         private int quantity;
+        private int menuPrice;
         private String menuName;
         private String tableNo;
         private List<OrderMenuOption.Response> optionList = new ArrayList<>();
@@ -77,6 +78,7 @@ public class OrderMenu implements Serializable {
 
             if(order.getId() != null)this.orderMenuId = order.getId();
             this.quantity = order.getQuantity();
+            this.menuPrice = order.getMenu().getPrice();
             this.shopId = order.getMenu().getId().substring(0, 10);
             this.menuName = order.getMenu().getName();
             if(order.getTab()!=null)this.tableNo = order.getTab().getId().substring(10);
