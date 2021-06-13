@@ -164,7 +164,7 @@ public class Order implements Serializable {
         if (request.getOrderRequest()!=null && request.orderRequest.length() > 0) {
             this.orderRequest = request.getOrderRequest();
         }
-        if(request.getAmount() == 0)throw new OrderAmountCanNotZeroException();
+//        if(request.getAmount() == 0)throw new OrderAmountCanNotZeroException();
         this.amount += request.getAmount();
         if (request.people != 0) this.people = request.people;
         if(request.getArriveTime() != null)this.arriveTime = request.getArriveTime();

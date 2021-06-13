@@ -114,8 +114,8 @@ public class OrderServiceImpl implements OrderService {
 
         isOpen(shop);
         order = request.getOrderId() != null ? isOwnOrder(request.getOrderId(), loginId) : post(loginId, user, shop, request);
-
         order.patch(request);
+
         System.out.println("arrtime : " + order.getArriveTime());
         if(request.getTabNo() != 0){
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
