@@ -184,6 +184,10 @@ public class Order implements Serializable {
         this.pg = request.getPg();
         this.compleAmount += request.getAmount(); // 여기서의 amount : 결제 요청 금액
         this.usePoint += request.getUsePoint();
+        if(this.getTab() != null){
+            this.getTab().setOrder(null);
+            this.getTab().setUsing('N');
+        }
     }
 
     public void refund() {

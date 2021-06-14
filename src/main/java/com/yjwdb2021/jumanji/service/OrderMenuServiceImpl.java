@@ -84,14 +84,14 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         return null;
     }
 
-    public List<OrderMenu> post(String authorization, OrderMenu.RequestList requestList) {
+    public List<OrderMenu> post(String authorization, List<OrderMenu.Request> requestList) {
         List<OrderMenu> response = new ArrayList<>();
 
         Menu menu;
         Tab table = null;
         String tabId = null;
         String loginId = userService.getMyId(authorization);
-        for(OrderMenu.Request request : requestList.getList()){
+        for(OrderMenu.Request request : requestList){
             OrderMenu orderMenu;
             long orderId = request.getOrderId().getTime();
             Timestamp orderTime = new Timestamp(orderId);
