@@ -85,6 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
         String loginId = userService.getMyId(authorization);
         User user = userService.isPresent(loginId); // 그 사용자가 맞는지 확인
         int remainPoint = user.getPoint() - request.getUsePoint();
+        System.out.println("request.getAmount : " + request.getAmount());
 
         // order가 내거인지
         System.out.println("내 주문이 맞는지?");

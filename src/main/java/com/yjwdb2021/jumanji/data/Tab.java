@@ -48,6 +48,7 @@ public class Tab implements Serializable {
     }
 
     public void setOrder(Order order){
+        this.setUsing('Y');
         this.order = order;
     }
 
