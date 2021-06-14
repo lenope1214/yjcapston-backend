@@ -48,7 +48,6 @@ public class OrderMenu implements Serializable {
     @Getter
     @NoArgsConstructor @AllArgsConstructor
     public static class Request {
-        private String orderMenuId;
         private Timestamp orderId;
         private String shopId;
         private String menuId;

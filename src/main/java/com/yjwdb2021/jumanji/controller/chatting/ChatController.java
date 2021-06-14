@@ -8,6 +8,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -17,24 +18,25 @@ import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController
+//@RestController
+@Controller
 public class
 ChatController {
     private static final Set<String> SESSION_IDS = new HashSet<>();
     private final SimpMessagingTemplate messagingTemplate;
-//    private final StompService stompService;
+
+    //    private final StompService stompService;
+    @MessageMapping("/") // "/pub/chat"
+    public void publishChateed(String chatMessage) {
+        System.out.println("chat>>>>>>>>");
+        log.info("publishChat : {}", chatMessage);
+
+        messagingTemplate.convertAndSend("/sub/test");
+    }
 
     @MessageMapping("/chat") // "/pub/chat"
     public void publishChat(StompMessage chatMessage) {
         System.out.println("chat>>>>>>>>");
-        log.info("publishChat : {}", chatMessage);
-
-        messagingTemplate.convertAndSend("/sub/" + chatMessage.getShopId() + "/" + chatMessage.getType() + "/" + chatMessage.getRoomId(), chatMessage);
-    }
-
-    @MessageMapping("/pub/chat") // "/pub/chat"
-    public void publishChat2(StompMessage chatMessage) {
-        System.out.println("pub/chat>>>>>>>>");
         log.info("publishChat : {}", chatMessage);
 
         messagingTemplate.convertAndSend("/sub/" + chatMessage.getShopId() + "/" + chatMessage.getType() + "/" + chatMessage.getRoomId(), chatMessage);
@@ -50,7 +52,7 @@ ChatController {
 
     @MessageMapping("/test/chat")
     @SendTo("/sub/test/chat")
-    public StompMessage testChat(StompMessage stompMessage){
+    public StompMessage testChat(StompMessage stompMessage) {
         System.out.println(stompMessage.toString());
         return stompMessage;
     }

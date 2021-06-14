@@ -61,15 +61,15 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'pd'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and o2.PAY_TIME >= :aDate\n" +
-            "                       and o2.PAY_TIME <= :bDate)\n" +
+            "                       and o2.id >= :aDate\n" +
+            "                       and o2.id <= to_date(:bDate)+1)\n" +
             "                    , 0) sumPd,\n" +
             "                nvl((select sum(o2.AMOUNT)\n" +
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'rf'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and o2.PAY_TIME >= :aDate\n" +
-            "                       and o2.PAY_TIME <= :bDate)\n" +
+            "                       and o2.id >= :aDate\n" +
+            "                       and o2.id <= to_date(:bDate)+1)\n" +
             "                    , 0) sumRf\n" +
             "from dual", nativeQuery = true)
     Statistics.SumPdRf getSumPdRfBetween(String shopId, String aDate, String bDate);
@@ -78,15 +78,15 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'pd'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and o2.PAY_TIME >= TRUNC(to_date(:aDate), 'IW')\n" +
-            "                       and o2.PAY_TIME < NEXT_DAY(to_date(:aDate), '월요일'))\n" +
+            "                       and o2.id >= TRUNC(to_date(:aDate), 'IW')\n" +
+            "                       and o2.id < NEXT_DAY(to_date(:aDate), '월요일'))\n" +
             "                    , 0) sumPd,\n" +
             "                nvl((select sum(o2.AMOUNT)\n" +
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'rf'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and o2.PAY_TIME >= TRUNC(to_date(:aDate), 'IW')\n" +
-            "                       and o2.PAY_TIME < NEXT_DAY(to_date(:aDate), '월요일'))\n" +
+            "                       and o2.id >= TRUNC(to_date(:aDate), 'IW')\n" +
+            "                       and o2.id < NEXT_DAY(to_date(:aDate), '월요일'))\n" +
             "                    , 0) sumRf\n" +
             "from dual", nativeQuery = true)
     Statistics.SumPdRf getSumPdRfWeek(String shopId, String aDate);
@@ -95,13 +95,13 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'pd'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and to_char(o2.PAY_TIME,'yyyyMMdd') = to_date(:aDate,'yyyyMMdd'))\n" +
+            "                       and to_char(o2.id,'yyyyMMdd') = to_date(:aDate,'yyyyMMdd'))\n" +
             "                    , 0) sumPd,\n" +
             "                nvl((select sum(o2.AMOUNT)\n" +
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'rf'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and to_char(o2.PAY_TIME,'yyyyMMdd') = to_date(:aDate,'yyyyMMdd'))\n" +
+            "                       and to_char(o2.id,'yyyyMMdd') = to_date(:aDate,'yyyyMMdd'))\n" +
             "                    , 0) sumRf\n" +
             "from dual", nativeQuery = true)
     Statistics.SumPdRf getSumPdRfDate(String shopId, String aDate);
@@ -110,15 +110,15 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'pd'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and o2.PAY_TIME >= TRUNC(to_date(:aDate,'yyyyMMdd'),'MM')\n" +
-            "                       and o2.PAY_TIME < ADD_MONTHS( TRUNC(to_date(:aDate,'yyyyMMdd'),'MM'), 1 ))\n" +
+            "                       and o2.id >= TRUNC(to_date(:aDate,'yyyyMMdd'),'MM')\n" +
+            "                       and o2.id < ADD_MONTHS( TRUNC(to_date(:aDate,'yyyyMMdd'),'MM'), 1 ))\n" +
             "                    , 0) sumPd,\n" +
             "                nvl((select sum(o2.AMOUNT)\n" +
             "                     from orders o2\n" +
             "                     where o2.STATUS = 'rf'\n" +
             "                       and o2.SHOP_ID = :shopId\n" +
-            "                       and o2.PAY_TIME >= TRUNC(to_date(:aDate,'yyyyMMdd'),'MM')\n" +
-            "                       and o2.PAY_TIME < ADD_MONTHS( TRUNC(to_date(:aDate,'yyyyMMdd'),'MM'), 1 ))\n" +
+            "                       and o2.id >= TRUNC(to_date(:aDate,'yyyyMMdd'),'MM')\n" +
+            "                       and o2.id < ADD_MONTHS( TRUNC(to_date(:aDate,'yyyyMMdd'),'MM'), 1 ))\n" +
             "                    , 0) sumRf\n" +
             "from dual", nativeQuery = true)
     Statistics.SumPdRf getSumPdRfMonth(String shopId, String aDate);

@@ -84,19 +84,19 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         return null;
     }
 
-    public List<OrderMenu> post(String authorization, List<OrderMenu.Request> requestList) {
+    public List<OrderMenu> post(String authorization, OrderMenu.RequestList requestList) {
         List<OrderMenu> response = new ArrayList<>();
 
         Menu menu;
         Tab table = null;
         String tabId = null;
         String loginId = userService.getMyId(authorization);
-        for(OrderMenu.Request request : requestList){
+        for(OrderMenu.Request request : requestList.getList()){
             OrderMenu orderMenu;
             long orderId = request.getOrderId().getTime();
             Timestamp orderTime = new Timestamp(orderId);
             String menuId = request.getMenuId();
-            if(request.getTabNo() != 0)tabId = request.getShopId() + request.getTabNo();
+            if(request.getTabNo() != 0)tabId = request.getShopId() + String.format("%02d", request.getTabNo());
 
             orderService.isPresent(request.getOrderId());
             menu = menuService.isPresent(menuId);
@@ -141,17 +141,17 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
 
     @Override
     public OrderMenu patch(String authorization, OrderMenu.Request request) {
-        Order order;
+//        Order order;
         OrderMenu orderMenu;
-        long orderId = request.getOrderId().getTime();
+//        long orderId = request.getOrderId().getTime();
         String menuId = request.getMenuId();
         String tabId = request.getShopId() + request.getTabNo();
         Menu menu = null;
         Tab table = null;
 
         //유효성 검사
-        isPresent(request.getOrderMenuId());
-        orderMenu = orderMenuRepository.findById(request.getOrderMenuId()).get();
+        isPresent(request.getMenuId());
+        orderMenu = orderMenuRepository.findById(request.getMenuId()).get();
         menu = menuService.isPresent(menuId);
         table = tableService.isPresent(tabId);
 
@@ -174,8 +174,8 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         String orderId = str[0];
     }
 
-    public OrderMenu isPresent(String orderId) {
-        Optional<OrderMenu> om = orderMenuRepository.findById(orderId);
+    public OrderMenu isPresent(String omId) {
+        Optional<OrderMenu> om = orderMenuRepository.findById(omId);
         if (om.isPresent()) return om.get();
         throw new com.yjwdb2021.jumanji.service.exception.orderMenuException.OrderMenuNotFoundException();
     }

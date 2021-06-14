@@ -27,45 +27,46 @@ public class PaymentServiceImpl implements PaymentService {
     OrderRepository orderRepository;
 
 
-    public Statistics.SumPdRf getShopStatistics(String authorization, String shopId, String scope, String aDate, String bDate) {
+    public Statistics.SumPdRf getShopStatistics(String authorization, String shopId, String scope, String aDate, String bDate, String date) {
         String loginId = userService.getMyId(authorization);
         Statistics.SumPdRf statistics = null;
 
         // 유효성 체크
         if (shopId == null) throw new NullPointerException("Shop Id를 입력해 주세요.");
 //        shopService.isOwnShop(loginId, shopId); // 내 식당인지
-        if (aDate == null) aDate = DateOperator.dateToYYYYMMDD(new Date(), false);
-        deleteSign(aDate, bDate);
+//        if (aDate == null) aDate = DateOperator.dateToYYYYMMDD(new Date(), false);
+
+        if(aDate != null)aDate = deleteSign(aDate);
+        if(bDate != null)bDate = deleteSign(bDate);
+        if(date != null)date = deleteSign(date);
+
         System.out.println("목표 식당 : " + shopId);
-        System.out.println("지정 날짜 : " + aDate);
+        System.out.println("지정 날짜 : " + date);
+        System.out.println("지정 기준 : " + scope);
         switch(scope){
             case "between" :
                 statistics = orderRepository.getSumPdRfBetween(shopId, aDate, bDate);
                 break;
             case "week" :
-                statistics = orderRepository.getSumPdRfWeek(shopId, aDate);
+                statistics = orderRepository.getSumPdRfWeek(shopId, date);
                 break;
             case "month" :
-                statistics = orderRepository.getSumPdRfMonth(shopId, aDate);
+                statistics = orderRepository.getSumPdRfMonth(shopId, date);
+                break;
             default:
-                statistics = orderRepository.getSumPdRfDate(shopId, aDate);
+                statistics = orderRepository.getSumPdRfDate(shopId, date);
                 break;
         }
         System.out.println("====================\nstatistics.getSumPd() : " + statistics.getSumPd() + "\nstatistics.getSumRf() : " + statistics.getSumRf());
         return statistics;
     }
 
-    private void deleteSign(String aDate, String bDate) {
-        if(aDate != null){
-            aDate = aDate.replace("-", "");
-            aDate = aDate.replace("/", "");
-            aDate = aDate.replace(",", "");
-        }
-        if(bDate != null){
-            bDate = bDate.replace("-", "");
-            bDate = bDate.replace("/", "");
-            bDate = bDate.replace(",", "");
-        }
+    private String deleteSign(String str) {
+        str = str.replace("-", "");
+        str = str.replace("/", "");
+        str = str.replace(".", "");
+        str = str.replace(",", "");
+        return str;
     }
 
 
