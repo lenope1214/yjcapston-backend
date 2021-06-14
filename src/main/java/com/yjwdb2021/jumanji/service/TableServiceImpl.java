@@ -124,12 +124,4 @@ public class TableServiceImpl implements BasicService<Tab, Tab.Request, String> 
     public String toTabId(String shopId, int tabNo) {
         return shopId + String.format("%02d", tabNo);
     }
-
-    public void save(Tab table) {
-        tableRepository.save(table);
-    }
-
-    public void saveAndFlush(Tab table) {
-        tableRepository.saveAndFlush(table);
-    }
 }

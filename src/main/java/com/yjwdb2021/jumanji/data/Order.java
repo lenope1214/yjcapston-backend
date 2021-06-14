@@ -38,7 +38,6 @@ public class Order implements Serializable {
     @Column(name = "pay_method")
     private String payMethod; // 결제방식
 
-
     private char accept = 'N';
 
 
@@ -50,9 +49,13 @@ public class Order implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore // 이거 없으면 fetchType lazy라서 json 변환중에 오류남.
     private User user;
-    @JoinColumn(name = "tab_id", updatable = false)@Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore // 이거 없으면 fetchType lazy라서 json 변환중에 오류남.
+
+//    @Column(name = "tab_id")
+//    private String tabId; // 외래키 없어서 발생했던거 같은데..?
+    @JoinColumn(name="tab_id") //table값이 update가 일어나기 때문에 오류가 발생. 일반 컬럼으로 조인
+//    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Setter
     private Tab tab;
     @JoinColumn
     @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -153,8 +156,10 @@ public class Order implements Serializable {
             if (order.getPayTime() != null)
                 this.payTime = DateOperator.dateToYYYYMMDD(order.getPayTime(), true) + DateOperator.dateToHHMM(order.getPayTime(), true);
             this.compleAmount = order.getCompleAmount();
-            this.table = order.tab;
+            if(order.getTab() != null)this.table = order.getTab();
         }
+
+
         public void setReviewed(char v){
             this.reviewed = v;
         }
@@ -169,6 +174,7 @@ public class Order implements Serializable {
         if (request.people != 0) this.people = request.people;
         if(request.getArriveTime() != null)this.arriveTime = request.getArriveTime();
         this.status = "rd";
+//        if(request.getTabNo() != 0)this.tabId = request.getShopId() + String.format("%02d", request.getTabNo()); // 일반 컬럼으로 했을 때 이렇게 사용.
     }
 
     public void pay(Payment.Request request) {

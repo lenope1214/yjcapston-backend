@@ -85,16 +85,5 @@ public class PaymentController {
     }
 
 
-    @Transactional
-    @GetMapping("shops/{shopId}/payments/statistics")
-    public ResponseEntity<?> getStatistics(@RequestHeader String authorization,
-                                           @PathVariable String shopId,
-                                           @Nullable @RequestParam String scope,
-                                           @Nullable @RequestParam String aDate,
-                                           @Nullable @RequestParam String bDate) {
-        Statistics.SumPdRf statistics = paymentService.getShopStatistics(authorization, shopId, scope, aDate, bDate);
-//        statistics
-        return new ResponseEntity<>(statistics, HttpStatus.OK);
-    }
 
 }

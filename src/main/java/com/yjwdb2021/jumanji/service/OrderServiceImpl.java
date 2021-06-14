@@ -3,6 +3,7 @@ package com.yjwdb2021.jumanji.service;
 import com.yjwdb2021.jumanji.data.*;
 import com.yjwdb2021.jumanji.repository.OrderRepository;
 import com.yjwdb2021.jumanji.repository.ReviewRepository;
+import com.yjwdb2021.jumanji.repository.TableRepository;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderHasExistException;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotFoundException;
 import com.yjwdb2021.jumanji.service.exception.shopException.ShopNotOpenException;
@@ -31,6 +32,8 @@ public class OrderServiceImpl implements OrderService {
     ShopServiceImpl shopService;
     @Autowired
     TableServiceImpl tableService;
+    @Autowired
+    TableRepository tableRepository;
 
 //    public ResponseEntity<?> getCartId() {
 //        @Getter
@@ -93,7 +96,6 @@ public class OrderServiceImpl implements OrderService {
                 .shop(shop)
                 .user(user)
                 .build();
-                orderRepository.save(order);
         return order;
     }
 
@@ -116,15 +118,15 @@ public class OrderServiceImpl implements OrderService {
         order = request.getOrderId() != null ? isOwnOrder(request.getOrderId(), loginId) : post(loginId, user, shop, request);
         order.patch(request);
 
-        System.out.println("arrtime : " + order.getArriveTime());
         if(request.getTabNo() != 0){
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
             if(table.getOrder() != null)throw new TableAlreadUsingException();
             table.setOrder(order);
+//            tableRepository.save(table);
             order.setTab(table);
-            tableService.saveAndFlush(table);
+//            System.out.println("테이블 정보 추가... get Id : " + order.getTab().getId());
         }
-        order = orderRepository.saveAndFlush(order);
+        orderRepository.save(order);
         return order;
     }
 
@@ -166,11 +168,6 @@ public class OrderServiceImpl implements OrderService {
 
         List<Order> orderList;
         orderList = orderRepository.findAllByShop_Id(shopId);
-        System.out.println("해당 매장의 주문목록");
-        for(Order order: orderList){
-            System.out.println("getOrderRequest : " + order.getOrderRequest() + "\n");
-            System.out.println("getUser().getName()" + order.getUser().getName());
-        }
         return orderList;
     }
 

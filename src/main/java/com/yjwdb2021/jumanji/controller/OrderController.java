@@ -92,6 +92,7 @@ public class OrderController {
     // 주문 등록 및 수정
     @RequestMapping(value = "orders", method = {RequestMethod.POST, RequestMethod.PATCH})
     public ResponseEntity<?> postOrder(@RequestHeader String authorization, @RequestBody Order.Request request){
+        System.out.println("테이블 등록 및 수정!");
         Order order = orderService.patch(authorization, request);
         Order.Response response = new Order.Response(order);
         return new ResponseEntity<>(response, HttpStatus.OK);
