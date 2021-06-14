@@ -41,9 +41,10 @@ public class OrderController {
         List<Order> orderList = orderService.getList(authorization);
         List<Order.Response> response = new ArrayList<>();
         List<OrderMenu> orderMenuList;
-        List<OrderMenu.Response> omResponseList = new ArrayList<>();
+        List<OrderMenu.Response> omResponseList;
         Order.Response res;
         for(Order order : orderList){
+            omResponseList = new ArrayList<>();
             res = new Order.Response(order);
             orderMenuList = orderMenuService.getList(null, order.getId());
             for(OrderMenu om : orderMenuList){
@@ -61,9 +62,10 @@ public class OrderController {
     public ResponseEntity<?> getOrderByShopId(@RequestHeader String authorization, @PathVariable String shopId){
         List<Order> orderList = orderService.getListByShopId(authorization, shopId);
         List<Order.Response> response = new ArrayList<>();
-        List<OrderMenu.Response> omResponseList = new ArrayList<>();
+        List<OrderMenu.Response> omResponseList;
         List<OrderMenu> orderMenuList;
         for(Order order : orderList){
+            omResponseList = new ArrayList<>();
             Order.Response res = new Order.Response(order);
             orderMenuList = orderMenuService.getList(null, order.getId());
             for(OrderMenu om : orderMenuList){
