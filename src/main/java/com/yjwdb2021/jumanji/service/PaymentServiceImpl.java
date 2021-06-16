@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -27,9 +29,11 @@ public class PaymentServiceImpl implements PaymentService {
     OrderRepository orderRepository;
 
 
-    public Statistics.SumPdRf getShopStatistics(String authorization, String shopId, String scope, String aDate, String bDate, String date) {
+    public Statistics getShopStatistics(String authorization, String shopId, String scope, String aDate, String bDate, String date) {
         String loginId = userService.getMyId(authorization);
-        Statistics.SumPdRf statistics = null;
+        Statistics statistics = new Statistics();
+
+        Date start, end;
 
         // 유효성 체크
         if (shopId == null) throw new NullPointerException("Shop Id를 입력해 주세요.");
@@ -43,21 +47,52 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("목표 식당 : " + shopId);
         System.out.println("지정 날짜 : " + date);
         System.out.println("지정 기준 : " + scope);
+
+        Calendar cal = Calendar.getInstance(Locale.KOREA);
+        start = DateOperator.strToDate(date, false);
+        end = DateOperator.strToDate(date, false);
+
+        // 시작날짜부터 정하고 마지막 날짜 정하기.
+
         switch(scope){
             case "between" :
-                statistics = orderRepository.getSumPdRfBetween(shopId, aDate, bDate);
+                statistics.setSumPdRf(orderRepository.getSumPdRfBetween(shopId, aDate, bDate));
+                start = DateOperator.strToDate(aDate, false);
+                end = DateOperator.strToDate(bDate, false);
+                start = DateOperator.trim(start);
+                end = DateOperator.trim(end);
                 break;
             case "week" :
-                statistics = orderRepository.getSumPdRfWeek(shopId, date);
+                statistics.setSumPdRf(orderRepository.getSumPdRfWeek(shopId, date));
+                // 주간 날짜 정하기
+                cal.setTime(start);
+                cal.add(Calendar.DATE, 2 - cal.get(Calendar.DAY_OF_WEEK));
+                start = cal.getTime();
+                System.out.println("주의 첫번째 요일(월요일)날짜:"+DateOperator.YYYYMMDD.format(cal.getTime()) + ",  start : " + start.getTime());
+
+                cal.setTime(end);
+                cal.add(Calendar.DATE, 8 - cal.get(Calendar.DAY_OF_WEEK));
+                end = cal.getTime();
+                System.out.println("주의 마지막 요일(일요일)날짜:"+DateOperator.YYYYMMDD.format(cal.getTime()) + ",  end : " + end.getTime());
                 break;
             case "month" :
-                statistics = orderRepository.getSumPdRfMonth(shopId, date);
+                statistics.setSumPdRf(orderRepository.getSumPdRfMonth(shopId, date));
                 break;
+            case "date":
             default:
-                statistics = orderRepository.getSumPdRfDate(shopId, date);
+                start = DateOperator.trim(start);
+                cal.setTime(end); // 1일 후 00:00을 가져오기 위해 cal 사용.
+                cal.add(Calendar.DATE, 1); // 1일 더하기.
+                end = cal.getTime(); // 1일 더한 후의 값을 end로 지정해줌.
+                end = DateOperator.trim(end); // 00:00으로 변경.
+                statistics.setSumPdRf(orderRepository.getSumPdRfDate(shopId, date));
                 break;
         }
-        System.out.println("====================\nstatistics.getSumPd() : " + statistics.getSumPd() + "\nstatistics.getSumRf() : " + statistics.getSumRf());
+        System.out.println("DATE/ start : " + start + ", getTime() : " + start.getTime());
+        System.out.println("DATE/ end : " + end + ", getTime() : " + end.getTime());
+        statistics.setPdOrderList(orderRepository.findByStatusAndIdIsBetweenOrderByIdDesc("pd", start, end));
+        statistics.setRfOrderList(orderRepository.findByStatusAndIdIsBetweenOrderByIdDesc("rf", start, end));
+        System.out.println("====================\nsumPdRf.getSumPd() : " + statistics.getSumPdRf().getSumPd() + "\nsumPdRf.getSumRf() : " + statistics.getSumPdRf().getSumRf());
         return statistics;
     }
 
@@ -85,6 +120,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Payment post(String authorization, Payment.Request request) {
         String loginId = userService.getMyId(authorization);
         User user = userService.isPresent(loginId); // 그 사용자가 맞는지 확인
+        Tab table;
         int remainPoint = user.getPoint() - request.getUsePoint();
         System.out.println("request.getAmount : " + request.getAmount());
 
@@ -93,13 +129,16 @@ public class PaymentServiceImpl implements PaymentService {
         Order order = orderService.isOwnOrder(request.getOrderId(), loginId); // 해당 사용자의 주문이 맞는지
         System.out.println("맞는지 검사 후");
         // 맞다면, 금액이 전액 지불 됐는지 확인.
+        System.out.println("order.getAmount() : " + order.getAmount());
+        System.out.println("order.getCompleAmount() : " + order.getCompleAmount());
+        System.out.println("order.getUsePoint() : " + order.getUsePoint());
         if (order.getAmount() - order.getCompleAmount() - order.getUsePoint() <= 0) // 총 금액 - 결제 금액 - 사용 포인트가 0보다 작거나 같다면 결제가 완료 되었음.
             return null;
-        if (order.getAmount() <  order.getCompleAmount() + request.getAmount() + request.getUsePoint()) throw new PayAmountOverException();
+        if (order.getAmount() <  order.getCompleAmount() +  request.getUsePoint()) throw new PayAmountOverException();
 
+        if(request.get)
 
-
-        order.pay(request);
+        order.pay(request, table);
         System.out.println("남은 포인트 : " + remainPoint);
         if (remainPoint >= 0)
             user.setPoint((int)(remainPoint + request.getAmount() /100));

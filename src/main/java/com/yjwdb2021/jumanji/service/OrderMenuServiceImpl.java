@@ -6,6 +6,7 @@ import com.yjwdb2021.jumanji.repository.OrderMenuRepository;
 import com.yjwdb2021.jumanji.repository.OrderRepository;
 import com.yjwdb2021.jumanji.repository.UserRepository;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotMineException;
+import com.yjwdb2021.jumanji.service.exception.shopException.ShopMissMatchException;
 import com.yjwdb2021.jumanji.service.interfaces.BasicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -132,7 +133,6 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
                     orderMenuOptionRepository.save(orderMenuOption);
                 }
                 orderMenu.setOptionList(orderMenuOptionList);
-                System.out.println(orderMenu.toString());
             }
             response.add(orderMenu);
         }
@@ -194,7 +194,7 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
 
     public void equalsShop(String aId, String bId){
         if(aId.equals(bId))return ;
-        throw new com.yjwdb2021.jumanji.service.exception.shopException.ShopMissMatchException();
+        throw new ShopMissMatchException();
     }
 //    public ResponseEntity<?> postOrder(Order.Request request) {
 //        Order order;

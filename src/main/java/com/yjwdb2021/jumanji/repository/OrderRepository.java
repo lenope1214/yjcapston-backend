@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Timestamp> {
@@ -14,6 +15,8 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
     // 이성복 돼지???
 
     List<Order> findAllByShop_Id(String shopId);
+
+    List<Order> findByStatusAndIdIsBetweenOrderByIdDesc(String status, Date start, Date end);
 
 
     @Query(value = "select o.ID id,\n" +

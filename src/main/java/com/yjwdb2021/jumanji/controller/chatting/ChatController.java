@@ -47,7 +47,7 @@ ChatController {
         System.out.println("pub/jmj>>>>>>>>");
         log.info("publishChat : {}", chatMessage);
 
-        messagingTemplate.convertAndSend("/sub/4850101906/o/roomId", chatMessage);
+        messagingTemplate.convertAndSend("/sub/jmj", chatMessage);
     }
 
     @MessageMapping("/test/chat")
