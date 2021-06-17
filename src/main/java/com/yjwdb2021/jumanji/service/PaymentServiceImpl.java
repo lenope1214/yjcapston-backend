@@ -26,6 +26,8 @@ public class PaymentServiceImpl implements PaymentService {
     @Autowired
     ShopServiceImpl shopService;
     @Autowired
+    TableServiceImpl tableService;
+    @Autowired
     OrderRepository orderRepository;
 
 
@@ -121,32 +123,31 @@ public class PaymentServiceImpl implements PaymentService {
         String loginId = userService.getMyId(authorization);
         User user = userService.isPresent(loginId); // 그 사용자가 맞는지 확인
         Tab table;
+        Order order;
         int remainPoint = user.getPoint() - request.getUsePoint();
-        System.out.println("request.getAmount : " + request.getAmount());
 
         // order가 내거인지
-        System.out.println("내 주문이 맞는지?");
-        Order order = orderService.isOwnOrder(request.getOrderId(), loginId); // 해당 사용자의 주문이 맞는지
-        System.out.println("맞는지 검사 후");
+        order = orderService.isOwnOrder(request.getOrderId(), loginId); // 해당 사용자의 주문이 맞는지
+        table = tableService.get(order.getId());
         // 맞다면, 금액이 전액 지불 됐는지 확인.
-        System.out.println("order.getAmount() : " + order.getAmount());
-        System.out.println("order.getCompleAmount() : " + order.getCompleAmount());
-        System.out.println("order.getUsePoint() : " + order.getUsePoint());
         if (order.getAmount() - order.getCompleAmount() - order.getUsePoint() <= 0) // 총 금액 - 결제 금액 - 사용 포인트가 0보다 작거나 같다면 결제가 완료 되었음.
             return null;
         if (order.getAmount() <  order.getCompleAmount() +  request.getUsePoint()) throw new PayAmountOverException();
 
-        if(request.get)
 
-        order.pay(request, table);
-        System.out.println("남은 포인트 : " + remainPoint);
+
+        order.pay(request);
+        if(table!= null){
+            table.pay();
+            tableService.save(table);
+        }
         if (remainPoint >= 0)
             user.setPoint((int)(remainPoint + request.getAmount() /100));
         else
             throw new PayPointOverException();
         Payment payment = new Payment(order);
-        System.out.println("결제시간 : " + payment.getPayTime());
         System.out.println();
+
         orderRepository.saveAndFlush(order);
         userService.save(user);
         return payment;

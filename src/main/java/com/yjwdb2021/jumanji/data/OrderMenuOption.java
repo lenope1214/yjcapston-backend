@@ -30,9 +30,6 @@ public class OrderMenuOption {
         private String optionId;
         private int quantity;
         public Response(OrderMenuOption omo){
-            System.out.println("omo.getId().getOrderMenu().getId() : " + omo.getId().getOrderMenu().getId());
-            System.out.println("omo.getId().getOption().getId() : " + omo.getId().getOption().getId());
-            System.out.println("omo.getQuantity() : " + omo.getQuantity());
             this.orderMenuId = omo.getId().getOrderMenu().getId();
             this.optionId = omo.getId().getOption().getId();
             this.quantity = omo.getQuantity();

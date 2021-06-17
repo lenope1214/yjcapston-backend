@@ -33,7 +33,8 @@ public interface OrderMenuRepository extends JpaRepository<OrderMenu, String> {
 
     @Query(value = "select om.*\n" +
             "from ORDER_MENUS om\n" +
-            "where id like :orderId || 'o' || '%'", nativeQuery = true)
+            "where id like :orderId || 'o' || '%'" +
+            "order by om.ID desc", nativeQuery = true)
     List<OrderMenu> getOrderMenuList(String orderId);
 
 

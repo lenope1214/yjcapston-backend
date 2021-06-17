@@ -14,12 +14,12 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
 
     // 이성복 돼지???
 
-    List<Order> findAllByShop_Id(String shopId);
+    List<Order> findAllByShop_IdOrderById(String shopId);
 
     List<Order> findByStatusAndIdIsBetweenOrderByIdDesc(String status, Date start, Date end);
 
 
-    @Query(value = "select o.ID id,\n" +
+    @Query(value = "select o.ID            id,\n" +
             "       o.STATUS,\n" +
             "       o.ORDER_REQUEST orderRequest,\n" +
             "       o.PEOPLE,\n" +
@@ -36,19 +36,14 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
             "       case\n" +
             "           when r.id is not null then 'Y'\n" +
             "           else 'N' end\n" +
-            "                     reviewed\n" +
+            "                       reviewed\n" +
             "from orders o\n" +
             "         left join REVIEWS R on o.ID = R.ORDER_ID\n" +
-            "where o.USER_ID = :userId", nativeQuery = true)
-//    @Query(value = "select orders.*,\n" +
-//            "       case\n" +
-//            "           when r.id is not null then 'Y'\n" +
-//            "           else 'N' end\n" +
-//            "                     reviewed\n" +
-//            "from orders orders\n" +
-//            "         left join REVIEWS R on orders.ID = R.ORDER_ID\n" +
-//            "where orders.USER_ID = :userId", nativeQuery = true)
+            "where o.USER_ID = :userId\n" +
+            "order by o.ID desc", nativeQuery = true)
     List<Order.MyInfo> myOrderListContainsReviewed(String userId);
+
+//    List<Order.ContainsMenu> findBy(String userId);
 
 
     @Query(value = "select \n" +

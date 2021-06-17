@@ -44,8 +44,6 @@ public class TableServiceImpl {
     public Tab post(String authorization, Tab.Request request) {
         String loginId = userService.getMyId(authorization);
         String tabId = request.getShopId() + String.format("%02d", request.getNo());
-        System.out.println("request.getNo() : " + request.getNo());
-        System.out.println("tabId : " + tabId);
         // 유효성 체크 --
         if (request.getNo() == 0) throw new CanNotBeZero("Table No can not be zero");
         userService.isPresent(loginId); // 로그인 아이디가 존재하는지
@@ -122,5 +120,13 @@ public class TableServiceImpl {
 
     public String toTabId(String shopId, int tabNo) {
         return shopId + String.format("%02d", tabNo);
+    }
+
+    public Tab get(Timestamp orderId) {
+        return tableRepository.findByOrderId(orderId);
+    }
+
+    public void save(Tab table) {
+        tableRepository.save(table);
     }
 }

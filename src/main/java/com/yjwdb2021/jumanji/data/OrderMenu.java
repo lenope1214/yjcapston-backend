@@ -72,17 +72,17 @@ public class OrderMenu implements Serializable {
         private List<OrderMenuOption.Response> optionList = new ArrayList<>();
 
 
-        public Response(OrderMenu order){
+        public Response(OrderMenu om){
             optionList = new ArrayList<>();
 
-            if(order.getId() != null)this.orderMenuId = order.getId();
-            this.quantity = order.getQuantity();
-            this.menuPrice = order.getMenu().getPrice();
-            this.shopId = order.getMenu().getId().substring(0, 10);
-            this.menuName = order.getMenu().getName();
-            if(order.getTab()!=null)this.tableNo = order.getTab().getId().substring(10);
-            if(order.optionList == null)return;
-            for(OrderMenuOption omo : order.optionList){
+            if(om.getId() != null)this.orderMenuId = om.getId();
+            this.quantity = om.getQuantity();
+            this.menuPrice = om.getMenu().getPrice();
+            this.shopId = om.getMenu().getShop().getId();
+            this.menuName = om.getMenu().getName();
+            if(om.getTab()!=null)this.tableNo = om.getTab().getId().substring(10);
+            if(om.optionList == null)return;
+            for(OrderMenuOption omo : om.optionList){
                 this.optionList.add(new OrderMenuOption.Response(omo));
             }
         }

@@ -120,13 +120,13 @@ public class OrderServiceImpl implements OrderService {
 
         if(request.getTabNo() != 0){
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
-            if(!table.getOrder().equals(request.getOrderId()) && table.getOrder() != null)throw new TableAlreadUsingException();
+            if(table.getOrder() != null && !table.getOrder().equals(request.getOrderId()))throw new TableAlreadUsingException();
             table.setOrder(order);
-//            tableRepository.save(table);
-            order.setTab(table);
+            tableRepository.save(table);
+            order.setTab_id(table.getId());
 //            System.out.println("테이블 정보 추가... get Id : " + order.getTab().getId());
         }
-        orderRepository.save(order);
+        orderRepository.saveAndFlush(order);
         return order;
     }
 
@@ -167,7 +167,7 @@ public class OrderServiceImpl implements OrderService {
         shopService.isOwnShop(loginId, shopId);
 
         List<Order> orderList;
-        orderList = orderRepository.findAllByShop_Id(shopId);
+        orderList = orderRepository.findAllByShop_IdOrderById(shopId);
         return orderList;
     }
 

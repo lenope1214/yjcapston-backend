@@ -96,8 +96,7 @@ public class Shop {
         private String imgPath;
         private String phone;
         private String ownerId;
-        @Setter
-        private char marked = 'N';
+
 
         public Response(Shop.Dao dao) {
             this.shopId = dao.getShopId();
@@ -113,11 +112,6 @@ public class Shop {
             this.imgPath = dao.getImgPath();
             this.score = Double.parseDouble(dao.getScore());
             this.reviews = Integer.parseInt(dao.getReviews());
-        }
-
-        public Response(Shop.Dao dao, char marked){
-            this(dao);
-            this.marked = marked;
         }
 
         public Response(Shop shop) {
@@ -136,12 +130,23 @@ public class Shop {
             this.ownerId = shop.getOwner().getId();
         }
 
+    }
 
-        public Response(Shop shop, char marked) {
-            this(shop);
+    @Getter
+    public static class ResponseMarked extends Response{
+        private char marked = 'N';
+
+        public ResponseMarked(Dao dao, char marked) {
+            super(dao);
+            this.marked = marked;
+        }
+
+        public ResponseMarked(Shop shop, char marked) {
+            super(shop);
             this.marked = marked;
         }
     }
+
 
 
     @Builder(builderMethodName = "insertShop")
@@ -179,7 +184,7 @@ public class Shop {
         List<Review.Response> reviewList = new ArrayList<>();
 
         public Info(Shop shop, char marked) {
-            this.shopInfo = new Response(shop, marked);
+            this.shopInfo = new ResponseMarked(shop, marked);
         }
 
 

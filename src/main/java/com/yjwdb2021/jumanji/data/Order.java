@@ -55,11 +55,15 @@ public class Order implements Serializable {
 //    private String tabId; // 외래키 없어서 발생했던거 같은데..?
 //    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
 //    @OneToOne(mappedBy = "order")
-//    @Setter
+    @Setter
+    @JoinColumn
     private String tab_id;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Review> review;
+    private List<Review> reviewList;
+
+//    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<OrderMenu> orderMenuList; // orderMenus DB 구조 바꿔야 함. Order_id, sequence 복합키
 
 
     @Builder
@@ -147,7 +151,7 @@ public class Order implements Serializable {
             this.orderRequest = order.getOrderRequest();
             this.usePoint = order.getUsePoint();
             this.status = order.getStatus();
-            this.reviewed = order.getReview() != null ? 'Y' : 'N';
+            this.reviewed = order.getReviewList() != null ? 'Y' : 'N';
             this.amount = order.getAmount();
             this.arriveTime = order.getArriveTime();
             this.pg = order.getPg();
@@ -187,11 +191,6 @@ public class Order implements Serializable {
         this.usePoint += request.getUsePoint();
     }
 
-    public void pay(Payment.Request request, Tab tab) {
-        pay(request);
-        tab.setOrder(null);
-        tab.setUsing('N');
-    }
 
     public void refund() {
         this.status = "rf";
@@ -201,6 +200,12 @@ public class Order implements Serializable {
         this.accept = 'Y';
     }
 
+    @NoArgsConstructor @Getter
+    public static class ContainsMenu{
+        Order order;
+        OrderMenu orderMenu;
+        char reviewed;
+    }
 
     public interface MyInfo{
         Timestamp getId();

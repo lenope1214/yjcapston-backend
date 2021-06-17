@@ -52,12 +52,12 @@ public class UserShopMarkService  {
         // 서비스
         List<Shop> shopList = usmRepository.findMyMarks(loginId);
         // 값 체크
-        System.out.println("shopList >>>>>>>>>>>>>>>>");
-        for (Shop shop : shopList){
-            System.out.println("shop id : " + shop.getId());
-            System.out.println("shop name : " + shop.getName());
-        }
-        System.out.println("shopList <<<<<<<<<<<<<<<<");
+//        System.out.println("shopList >>>>>>>>>>>>>>>>");
+//        for (Shop shop : shopList){
+//            System.out.println("shop id : " + shop.getId());
+//            System.out.println("shop name : " + shop.getName());
+//        }
+//        System.out.println("shopList <<<<<<<<<<<<<<<<");
         return shopList;
     }
 

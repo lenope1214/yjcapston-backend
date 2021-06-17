@@ -74,7 +74,6 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         orderService.isPresent(orderId);
 
         List<OrderMenu> orderMenuList;
-        System.out.println("orderId.toStrig : " + orderId.getTime());
         orderMenuList = orderMenuRepository.getOrderMenuList("" + orderId.getTime());
         return orderMenuList;
     }
@@ -182,7 +181,6 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
 
     public boolean isMyOrder(String loginId, Timestamp orderId){
         char om = orderRepository.isMyOrder(loginId, orderId);
-        System.out.println("내 주문요청이야? " + om );
         if(om == 'Y')return true;
         return false;
     }
