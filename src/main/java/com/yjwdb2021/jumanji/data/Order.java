@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString(exclude = {"tab", "review"})
+@ToString(exclude = {"tableId", "reviewList"})
 @Table(name = "ORDERS")
 public class Order implements Serializable {
     @Id
