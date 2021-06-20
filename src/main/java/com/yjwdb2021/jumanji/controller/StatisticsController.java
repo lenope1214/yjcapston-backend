@@ -20,11 +20,13 @@ public class StatisticsController {
     public ResponseEntity<?> getStatistics(@RequestHeader String authorization,
                                            @PathVariable String shopId,
                                            @Nullable @RequestParam String scope,
+                                           @Nullable @RequestParam String date,
                                            @Nullable @RequestParam String aDate,
                                            @Nullable @RequestParam String bDate) {
-        Statistics.SumPdRf statistics = paymentService.getShopStatistics(authorization, shopId, scope, aDate, bDate);
+        Statistics statistics = paymentService.getShopStatistics(authorization, shopId, scope, aDate, bDate, date);
 //        statistics
-        return new ResponseEntity<>(statistics, HttpStatus.OK);
+        Statistics.Response response = new Statistics.Response(statistics);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

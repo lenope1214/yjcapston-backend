@@ -1,19 +1,22 @@
 package com.yjwdb2021.jumanji.data;
 
 import com.yjwdb2021.jumanji.service.exception.MyNullPointerException;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateOperator {
-    static final SimpleDateFormat YYMMDD = new SimpleDateFormat("yyMMdd"); // hh : 0-11 HH : 0-23
-    static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd"); // hh : 0-11 HH : 0-23
-    static final SimpleDateFormat YYYYMMDDHHMMSS = new SimpleDateFormat("yyyyMMddHHmmss");
-    static final SimpleDateFormat SYYMMDD = new SimpleDateFormat("yy/MM/dd"); // hh : 0-11 HH : 0-23
-    static final SimpleDateFormat SYYYYMMDD = new SimpleDateFormat("yyyy/MM/dd");
-    static final SimpleDateFormat SYYYYMMDDHHMMSS = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+    public static final SimpleDateFormat YYMMDD = new SimpleDateFormat("yyMMdd"); // hh : 0-11 HH : 0-23
+    public static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd"); // hh : 0-11 HH : 0-23
+    public static final SimpleDateFormat YYYYMMDDHHMMSS = new SimpleDateFormat("yyyyMMddHHmmss");
+    public static final SimpleDateFormat SYYMMDD = new SimpleDateFormat("yy/MM/dd"); // hh : 0-11 HH : 0-23
+    public static final SimpleDateFormat SYYYYMMDD = new SimpleDateFormat("yyyy/MM/dd");
+    public static final SimpleDateFormat SYYYYMMDDHHMMSS = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     public static Date stringToMilisecond(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Date parseDate = null;
@@ -63,9 +66,10 @@ public class DateOperator {
         return java.sql.Timestamp.valueOf(string);
     }
 
-    public static Date strToDate(String string){
+    public static Date strToDate(String string, boolean slash){
         try {
-            return SYYYYMMDD.parse(string);
+            if(slash)return SYYYYMMDD.parse(string);
+            return YYYYMMDD.parse(string);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -77,6 +81,16 @@ public class DateOperator {
         return YYYYMMDDHHMMSS.format(date);
     }
 
+    public static Date trim(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.HOUR, 0);
+
+        return calendar.getTime();
+    }
 
 
 //    public static Timestamp stringToTimestamp(Time time){

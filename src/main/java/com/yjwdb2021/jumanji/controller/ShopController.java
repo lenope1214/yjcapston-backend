@@ -51,8 +51,7 @@ public class ShopController {
         Shop shop = shopService.getShopByShopId(authorization, shopId);
         UserShopMark usm = usmService.get(authorization, shopId);
         char marked = usm == null ? 'N' : 'Y';
-        Shop.Response response = new Shop.Response(shop);
-        response.setMarked(marked);
+        Shop.ResponseMarked response = new Shop.ResponseMarked(shop, marked);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -86,28 +85,39 @@ public class ShopController {
     public ResponseEntity<?> selectShopList(
             @Nullable @RequestHeader String authorization,
             @Nullable @RequestParam String category,
-            @Nullable @RequestParam String sortTarget
-    ) {
+            @Nullable @RequestParam String sortTarget,
+            @Nullable @RequestParam String shopName) {
+
+        System.out.println("shops list - Query Date Check!");
+        System.out.println("category : " + category);
+        System.out.println("sortTarget : " + sortTarget);
+        System.out.println("shopName : " + shopName);
         char marked;
-        List<Shop> usmList = new ArrayList<>();
-        List<Shop.Dao> daoList = shopService.getList(category, sortTarget); // 얘는 이렇게 하는게 좋을듯..
-        List<Shop.Response> response = new ArrayList<>();
-//        if(authorization != null){
-//            usmList = usmService.getList(authorization);
-//        }
-//        for (Shop.Dao dao : daoList) {
-//            marked = 'N';
-//            for(Shop shop : usmList){
-//                if(shop.getId().equals(dao.getShopId())){
-//                    marked = 'Y';
-//                    usmList.remove(shop);
-//                }
-//            }
-//            response.add(new Shop.Response(dao, marked));
-//        }
-        for(Shop.Dao dao : daoList){
-            response.add(new Shop.Response(dao));
+        List<Shop> usmList;
+        List<Shop.Dao> daoList = shopService.getList(category, sortTarget, shopName); // 얘는 이렇게 하는게 좋을듯..
+        List<Shop.ResponseMarked> response = new ArrayList<>();
+        if (authorization != null) {
+            usmList = usmService.getList(authorization);
+            for (Shop.Dao dao : daoList) {
+                marked = 'N';
+                for (Shop shop : usmList) {
+                    if (shop.getId().equals(dao.getShopId())) {
+                        marked = 'Y';
+                        usmList.remove(shop);
+                        if (usmList.isEmpty()) break; // remove 하기 때문에. 0 이상일 때는 있다는 말이 됨. null check로는 해결 불가능
+
+                    }
+                }
+                response.add(new Shop.ResponseMarked(dao, marked));
+            }
+        } else {
+            for (Shop.Dao dao : daoList) {
+                response.add(new Shop.ResponseMarked(dao, 'N'));
+            }
         }
+
+
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

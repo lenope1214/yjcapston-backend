@@ -6,6 +6,7 @@ import com.yjwdb2021.jumanji.repository.OrderMenuRepository;
 import com.yjwdb2021.jumanji.repository.OrderRepository;
 import com.yjwdb2021.jumanji.repository.UserRepository;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotMineException;
+import com.yjwdb2021.jumanji.service.exception.shopException.ShopMissMatchException;
 import com.yjwdb2021.jumanji.service.interfaces.BasicService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,6 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         orderService.isPresent(orderId);
 
         List<OrderMenu> orderMenuList;
-        System.out.println("orderId.toStrig : " + orderId.getTime());
         orderMenuList = orderMenuRepository.getOrderMenuList("" + orderId.getTime());
         return orderMenuList;
     }
@@ -84,19 +84,19 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         return null;
     }
 
-    public List<OrderMenu> post(String authorization, List<OrderMenu.Request> requestList) {
+    public List<OrderMenu> post(String authorization, OrderMenu.RequestList requestList) {
         List<OrderMenu> response = new ArrayList<>();
 
         Menu menu;
         Tab table = null;
         String tabId = null;
         String loginId = userService.getMyId(authorization);
-        for(OrderMenu.Request request : requestList){
+        for(OrderMenu.Request request : requestList.getList()){
             OrderMenu orderMenu;
             long orderId = request.getOrderId().getTime();
             Timestamp orderTime = new Timestamp(orderId);
             String menuId = request.getMenuId();
-            if(request.getTabNo() != 0)tabId = request.getShopId() + request.getTabNo();
+            if(request.getTabNo() != 0)tabId = request.getShopId() + String.format("%02d", request.getTabNo());
 
             orderService.isPresent(request.getOrderId());
             menu = menuService.isPresent(menuId);
@@ -132,7 +132,6 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
                     orderMenuOptionRepository.save(orderMenuOption);
                 }
                 orderMenu.setOptionList(orderMenuOptionList);
-                System.out.println(orderMenu.toString());
             }
             response.add(orderMenu);
         }
@@ -141,17 +140,17 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
 
     @Override
     public OrderMenu patch(String authorization, OrderMenu.Request request) {
-        Order order;
+//        Order order;
         OrderMenu orderMenu;
-        long orderId = request.getOrderId().getTime();
+//        long orderId = request.getOrderId().getTime();
         String menuId = request.getMenuId();
         String tabId = request.getShopId() + request.getTabNo();
         Menu menu = null;
         Tab table = null;
 
         //유효성 검사
-        isPresent(request.getOrderMenuId());
-        orderMenu = orderMenuRepository.findById(request.getOrderMenuId()).get();
+        isPresent(request.getMenuId());
+        orderMenu = orderMenuRepository.findById(request.getMenuId()).get();
         menu = menuService.isPresent(menuId);
         table = tableService.isPresent(tabId);
 
@@ -174,15 +173,14 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
         String orderId = str[0];
     }
 
-    public OrderMenu isPresent(String orderId) {
-        Optional<OrderMenu> om = orderMenuRepository.findById(orderId);
+    public OrderMenu isPresent(String omId) {
+        Optional<OrderMenu> om = orderMenuRepository.findById(omId);
         if (om.isPresent()) return om.get();
         throw new com.yjwdb2021.jumanji.service.exception.orderMenuException.OrderMenuNotFoundException();
     }
 
     public boolean isMyOrder(String loginId, Timestamp orderId){
         char om = orderRepository.isMyOrder(loginId, orderId);
-        System.out.println("내 주문요청이야? " + om );
         if(om == 'Y')return true;
         return false;
     }
@@ -194,7 +192,7 @@ public class OrderMenuServiceImpl implements BasicService<OrderMenu, OrderMenu.R
 
     public void equalsShop(String aId, String bId){
         if(aId.equals(bId))return ;
-        throw new com.yjwdb2021.jumanji.service.exception.shopException.ShopMissMatchException();
+        throw new ShopMissMatchException();
     }
 //    public ResponseEntity<?> postOrder(Order.Request request) {
 //        Order order;

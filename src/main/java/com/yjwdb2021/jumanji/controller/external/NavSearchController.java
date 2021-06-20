@@ -19,10 +19,8 @@ public class NavSearchController {
 
     @GetMapping("addressSearch/{keyword}")
     public ResponseEntity<?> callAddressApi(@PathVariable String keyword) {
-//        System.out.println("Keyword : " + keyword);
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("Content-Type", "text/html; charset=UTF-8");
-        System.out.println("키워드 : " + keyword);
         return new ResponseEntity<>(naverPlaceSearchService.searchPlace(keyword), responseHeaders, HttpStatus.OK);
     }
 }

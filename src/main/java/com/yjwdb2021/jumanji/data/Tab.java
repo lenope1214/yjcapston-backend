@@ -52,6 +52,11 @@ public class Tab implements Serializable {
         this.order = order;
     }
 
+    public void pay() {
+        this.setOrder(null);
+        this.setUsing('N');
+    }
+
     @Getter @AllArgsConstructor @NoArgsConstructor
     public static class Request{
         private String tabId;

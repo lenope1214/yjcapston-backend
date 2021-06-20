@@ -7,13 +7,14 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"tableId", "reviewList"})
 @Table(name = "ORDERS")
 public class Order implements Serializable {
     @Id
@@ -52,14 +53,17 @@ public class Order implements Serializable {
 
 //    @Column(name = "tab_id")
 //    private String tabId; // 외래키 없어서 발생했던거 같은데..?
-    @JoinColumn(name="tab_id") //table값이 update가 일어나기 때문에 오류가 발생. 일반 컬럼으로 조인
 //    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    @OneToOne(mappedBy = "order")
     @Setter
-    private Tab tab;
     @JoinColumn
-    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Review review;
+    private String tab_id;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviewList;
+
+//    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<OrderMenu> orderMenuList; // orderMenus DB 구조 바꿔야 함. Order_id, sequence 복합키
 
 
     @Builder
@@ -127,7 +131,7 @@ public class Order implements Serializable {
         private String payMethod; // 결제방식
         private char accept;
         private char reviewed;
-        private Tab table;
+        private String table_id;
         @Setter
         private List<OrderMenu.Response> orderMenuList;
 
@@ -147,7 +151,7 @@ public class Order implements Serializable {
             this.orderRequest = order.getOrderRequest();
             this.usePoint = order.getUsePoint();
             this.status = order.getStatus();
-            this.reviewed = order.getReview() != null ? 'Y' : 'N';
+            this.reviewed = order.getReviewList() != null ? 'Y' : 'N';
             this.amount = order.getAmount();
             this.arriveTime = order.getArriveTime();
             this.pg = order.getPg();
@@ -156,7 +160,8 @@ public class Order implements Serializable {
             if (order.getPayTime() != null)
                 this.payTime = DateOperator.dateToYYYYMMDD(order.getPayTime(), true) + DateOperator.dateToHHMM(order.getPayTime(), true);
             this.compleAmount = order.getCompleAmount();
-            if(order.getTab() != null)this.table = order.getTab();
+//            System.out.println(order.getTab().toString());
+            if(order.getTab_id() != null)this.table_id = order.getTab_id();
         }
 
 
@@ -184,11 +189,8 @@ public class Order implements Serializable {
         this.pg = request.getPg();
         this.compleAmount += request.getAmount(); // 여기서의 amount : 결제 요청 금액
         this.usePoint += request.getUsePoint();
-        if(this.getTab() != null){
-            this.getTab().setOrder(null);
-            this.getTab().setUsing('N');
-        }
     }
+
 
     public void refund() {
         this.status = "rf";
@@ -198,6 +200,12 @@ public class Order implements Serializable {
         this.accept = 'Y';
     }
 
+    @NoArgsConstructor @Getter
+    public static class ContainsMenu{
+        Order order;
+        OrderMenu orderMenu;
+        char reviewed;
+    }
 
     public interface MyInfo{
         Timestamp getId();

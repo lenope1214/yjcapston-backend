@@ -60,13 +60,9 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 
     private Iamport.IamportResponse<Iamport.AccessToken> getAuth() throws Exception {
         Iamport.AuthData authData = new Iamport.AuthData(api_key, api_secret);
-        System.out.println("Iamport api_key : " + api_key);
-        System.out.println("Iamport api_secret : " + api_secret);
         String authJsonData = gson.toJson(authData);
-        System.out.println("authJsonDate is null?" + (authJsonData == null));
         try {
             StringEntity data = new StringEntity(authJsonData);
-            System.out.println("data is null?" + (authJsonData == null));
             HttpPost postRequest = new HttpPost(API_URL + "/users/getToken");
             postRequest.setHeader("Accept", "application/json");
             postRequest.setHeader("Connection", "keep-alive");

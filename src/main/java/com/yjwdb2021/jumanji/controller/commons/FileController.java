@@ -51,7 +51,6 @@ public class FileController {
     @GetMapping("/shop/{shopId}/menu/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<?> loadMenuImg(@PathVariable String shopId, @PathVariable String fileName) {
-        System.out.println("이미지 로드 요청 !!!");
         Resource img = storageService.loadImg("files", "shop", shopId, "menu", fileName);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
                 "image/jpeg; filename=\"" + img.getFilename() + "\"").body(img);
@@ -60,7 +59,6 @@ public class FileController {
     @GetMapping("/shop/{shopId}/thumbnail/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<?> loadThumbNail(@PathVariable String shopId, @PathVariable String fileName) {
-        System.out.println("이미지 로드 요청 !!!");
         Resource img = storageService.loadImg("files", "shop", shopId, "thumbNail", fileName);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
                 "image/jpeg; filename=\"" + img.getFilename() + "\"").body(img);
@@ -69,9 +67,7 @@ public class FileController {
     @GetMapping("/shop/{shopId}/review/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<?> loadReviewImg(@PathVariable String shopId, @PathVariable String fileName) {
-        System.out.println("이미지 로드 요청 !!! 요청 정보 : " + shopId + ", fileName : " + fileName);
         Resource img = storageService.loadImg("files", "shop", shopId, "review", fileName);
-        System.out.println("이미지 잘 가져와지니? 이미지 이름 : " + img.getFilename());
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
                 "image/jpeg; filename=\"" + img.getFilename() + "\"").body(img);
     }
@@ -114,7 +110,6 @@ public class FileController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("컨트롤러 정상 종료");
         return "redirect:/";
     }
 }

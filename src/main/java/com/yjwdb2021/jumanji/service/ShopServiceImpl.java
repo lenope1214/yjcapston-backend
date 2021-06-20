@@ -93,7 +93,6 @@ public class ShopServiceImpl implements ShopService {
 
 
     public List<Shop> getMyShop(String authorization) {
-        System.out.println("ShopController in getMyShop");
         String loginId = userService.getMyId(authorization);
         User userEntity = userRepository.findById(loginId).get();
         List<Shop> myShopList = getShopListByOwnerId(userEntity.getId());
@@ -102,11 +101,16 @@ public class ShopServiceImpl implements ShopService {
 
 
     @Override
-    public List<Shop.Dao> getList(String category, String sortTarget) {
+    public List<Shop.Dao> getList(String... args) {
+        String category = args[0];
+        String sortTarget = args[1];
+        String shopName = args[2];
+
         List<Shop> shopList = new ArrayList<>();
-        sortTarget = sortTarget == null ? "" : sortTarget;
+        sortTarget = sortTarget == null ? "" : sortTarget; // String 변수들을 이렇게 안해주면 Binary가 필요하지만 Char 오류가 뜬다.
         category = category == null ? "" : category;
-        List<Shop.Dao> daoList = shopRepository.getShopListByCategorySortTarget(category, sortTarget);
+        shopName = shopName == null ? "" : shopName;
+        List<Shop.Dao> daoList = shopRepository.getShopListByCategorySortTarget(category, sortTarget, shopName);
         return daoList;
     }
 
