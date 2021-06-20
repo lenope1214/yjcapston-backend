@@ -137,10 +137,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         order.pay(request);
-        if(table!= null){
-            table.pay();
-            tableService.save(table);
-        }
+
         if (remainPoint >= 0)
             user.setPoint((int)(remainPoint + request.getAmount() /100));
         else
@@ -168,5 +165,22 @@ public class PaymentServiceImpl implements PaymentService {
 
     public boolean isEmpty(String id) {
         return false;
+    }
+
+    public void payComplite(Payment.Request request) {
+        Tab table;
+        Order order;
+
+        // order가 내거인지
+        order = orderService.isPresent(request.getOrderId()); // 주문이 있는지
+        table = tableService.get(order.getId());
+
+
+        order.payComple();
+        if(table!= null){
+            table.pay();
+            tableService.save(table);
+        }
+        orderRepository.saveAndFlush(order);
     }
 }
