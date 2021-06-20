@@ -183,13 +183,14 @@ public class Order implements Serializable {
     }
 
     public void pay(Payment.Request request) {
-        this.status = "pd";
         this.payMethod = request.getPayMethod();
         this.payTime = new Timestamp(System.currentTimeMillis());
         this.pg = request.getPg();
         this.compleAmount += request.getAmount(); // 여기서의 amount : 결제 요청 금액
         this.usePoint += request.getUsePoint();
     }
+
+    public void payComple(){ this.status = "pd"; }
 
 
     public void refund() {

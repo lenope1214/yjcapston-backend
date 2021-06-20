@@ -43,7 +43,7 @@ public class PaymentController {
     }
 
     @Transactional
-    @GetMapping("payments/complite")
+    @GetMapping("payments/complete")
     public ResponseEntity<?> complePayment(@RequestParam("imp_uid") String impUid, @RequestParam("merchant_uid") String merchantUid, HttpServletRequest request) throws Exception {
         System.out.println("request info" +
                 "request.getQueryString" + request.getQueryString() + "\n" +
@@ -82,6 +82,12 @@ public class PaymentController {
         if (payment == null) return new ResponseEntity<>("Payment is completed", HttpStatus.OK);
         Payment.Response response = new Payment.Response(payment);
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PostMapping("payments/complete")
+    public ResponseEntity<?> paymentComplite(@RequestBody Payment.Request request){
+        paymentService.payComplite(request);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
