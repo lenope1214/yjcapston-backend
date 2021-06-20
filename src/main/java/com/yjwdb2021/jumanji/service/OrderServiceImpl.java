@@ -120,8 +120,6 @@ public class OrderServiceImpl implements OrderService {
 
         if(request.getTabNo() != 0){
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
-            System.out.println("post/patch order 요청 orderId : " + request.getOrderId());
-            System.out.println("post/patch order table orderId : " + table.getOrder().getId());
             if(table.getOrder() != null && !table.getOrder().getId().equals(request.getOrderId()))throw new TableAlreadUsingException();
             else table.setOrder(order);
             tableRepository.save(table);
