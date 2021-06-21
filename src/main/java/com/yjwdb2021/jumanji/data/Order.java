@@ -10,7 +10,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@NamedEntityGraph(name = "Statistics.between", attributeNodes = {
+        @NamedAttributeNode("user"),
+        @NamedAttributeNode("shop")
+})
 @Getter
 @Entity
 @NoArgsConstructor
