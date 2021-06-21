@@ -1,9 +1,13 @@
 package com.yjwdb2021.jumanji.repository;
 
 import com.yjwdb2021.jumanji.data.*;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.persistence.Entity;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +20,7 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
 
     List<Order> findAllByShop_IdOrderById(String shopId);
 
+    @EntityGraph(value = "Statistics.between")
     List<Order> findByStatusAndIdIsBetweenOrderByIdDesc(String status, Date start, Date end);
 
 

@@ -9,6 +9,7 @@ import com.yjwdb2021.jumanji.data.externalData.iamport.*;
 import com.yjwdb2021.jumanji.service.OrderServiceImpl;
 import com.yjwdb2021.jumanji.service.ShopServiceImpl;
 import com.yjwdb2021.jumanji.service.UserServiceImpl;
+import javassist.tools.web.BadHttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -138,7 +139,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
             System.out.println("response.status code : " + response.getStatusLine().getStatusCode());
             if (response.getStatusLine().getStatusCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatusLine().getStatusCode() +"\nmessage : " + response.getStatusLine().getReasonPhrase());
+                        + response.getStatusLine().getStatusCode() + "\nmessage : " + response.getStatusLine().getReasonPhrase());
             }
 
             ResponseHandler<String> handler = new BasicResponseHandler();
@@ -234,6 +235,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
     //    public IamportResponse<Iamport.Payment> cancelPayment(String authorization, Iamport.CancelData cancelData) throws Exception {
     public Iamport.IamportResponse<Iamport.Payment> cancelPayment(String authorization, String m_id) throws Exception {
         String token = this.getToken(authorization);
+//        String token = this.getAuth().getResponse().getToken();
         String loginId = userService.getMyId(authorization);
         Long orderId = Long.parseLong(m_id);
         Timestamp orderIdTime = new Timestamp(orderId);
@@ -247,6 +249,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
         Order order = orderService.isOwnOrder(orderIdTime, loginId);
 
         if (token != null) {
+            System.out.println("token : " + token);
             return cancel(token, m_id, order);
         }
         return null;
@@ -255,6 +258,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 
     public Iamport.IamportResponse<Iamport.Payment> cancelPaymentByShop(String authorization, String m_id, String shopId) throws Exception {
         String token = this.getToken(authorization);
+//        String token = this.getAuth().getResponse().getToken();
         String loginId = userService.getMyId(authorization);
         Long orderId = Long.parseLong(m_id);
         Timestamp orderIdTime = new Timestamp(orderId);
@@ -271,10 +275,13 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 
 //        Order order = orderService.isOwnOrder(orderIdTime, loginId);
 
+        System.out.println("token : " + token);
+        System.out.println("order.getShop().getId() : " + order.getShop().getId());
+        System.out.println("shopId : " + shopId);
         if (token != null && order.getShop().getId().equals(shopId)) {
             return cancel(token, m_id, order);
         }
-        return null;
+        throw new BadHttpRequest();
     }
 
     private Iamport.IamportResponse<Iamport.Payment> cancel(String token, String m_id, Order order) throws UnsupportedEncodingException, URISyntaxException {
@@ -290,6 +297,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
         Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
         order.refund();
         orderService.statusUpdate(order);
+        System.out.println("환불됨. " + order.getStatus());
         return payment;
     }
 }
