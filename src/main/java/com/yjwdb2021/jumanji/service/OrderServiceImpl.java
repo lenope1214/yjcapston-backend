@@ -6,6 +6,7 @@ import com.yjwdb2021.jumanji.repository.ReviewRepository;
 import com.yjwdb2021.jumanji.repository.TableRepository;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderHasExistException;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotFoundException;
+import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotMineException;
 import com.yjwdb2021.jumanji.service.exception.shopException.ShopNotOpenException;
 import com.yjwdb2021.jumanji.service.exception.tableException.TableAlreadUsingException;
 import com.yjwdb2021.jumanji.service.interfaces.OrderService;
@@ -122,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
             if(table.getOrder() != null && !table.getOrder().getId().equals(request.getOrderId()))throw new TableAlreadUsingException();
             else table.setOrder(order);
-            tableRepository.save(table);
+            tableRepository.saveAndFlush(table);
             order.setTab_id(table.getId());
 //            System.out.println("테이블 정보 추가... get Id : " + order.getTab().getId());
         }
@@ -144,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public Order isPresent(Timestamp orderId) {
         Optional<Order> order =orderRepository.findById(orderId);
         if (order.isPresent()) return order.get();
-        throw new OrderNotFoundException();
+        throw new OrderNotFoundException(orderId.toString());
     }
 
     public boolean isEmpty(Timestamp orderId) {
@@ -156,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = isPresent(orderId);
         String _uId =order.getUser().getId();
         if(_uId.equals(userId))return order;
-        else throw new OrderNotFoundException(""+orderId.getTime());
+        else throw new OrderNotMineException(""+orderId.getTime());
     }
 
     public List<Order> getListByShopId(String authorization, String shopId) {

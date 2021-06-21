@@ -247,19 +247,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
         Order order = orderService.isOwnOrder(orderIdTime, loginId);
 
         if (token != null) {
-            Iamport.CancelData cancelData = new Iamport.CancelData(m_id, false); // imp_uid 가 아니면, m_id 넣게 되어있음.
-            System.out.println("m_id : " + cancelData.getMerchant_uid());
-            String cancelJsonData = gson.toJson(cancelData);
-            StringEntity data = new StringEntity(cancelJsonData);
-
-            String response = this.postRequest("/payments/cancel", token, data);
-
-            Type listType = new TypeToken<Iamport.IamportResponse<Iamport.Payment>>() {
-            }.getType();
-            Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
-            order.refund();
-            orderService.statusUpdate(order);
-            return payment;
+            return cancel(token, m_id, order);
         }
         return null;
     }
@@ -284,20 +272,24 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 //        Order order = orderService.isOwnOrder(orderIdTime, loginId);
 
         if (token != null && order.getShop().getId().equals(shopId)) {
-            Iamport.CancelData cancelData = new Iamport.CancelData(m_id, false); // imp_uid 가 아니면, m_id 넣게 되어있음.
-            System.out.println("m_id : " + cancelData.getMerchant_uid());
-            String cancelJsonData = gson.toJson(cancelData);
-            StringEntity data = new StringEntity(cancelJsonData);
-
-            String response = this.postRequest("/payments/cancel", token, data);
-
-            Type listType = new TypeToken<Iamport.IamportResponse<Iamport.Payment>>() {
-            }.getType();
-            Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
-            order.refund();
-            orderService.statusUpdate(order);
-            return payment;
+            return cancel(token, m_id, order);
         }
         return null;
+    }
+
+    private Iamport.IamportResponse<Iamport.Payment> cancel(String token, String m_id, Order order) throws UnsupportedEncodingException, URISyntaxException {
+        Iamport.CancelData cancelData = new Iamport.CancelData(m_id, false); // imp_uid 가 아니면, m_id 넣게 되어있음.
+        System.out.println("m_id : " + cancelData.getMerchant_uid());
+        String cancelJsonData = gson.toJson(cancelData);
+        StringEntity data = new StringEntity(cancelJsonData);
+
+        String response = this.postRequest("/payments/cancel", token, data);
+
+        Type listType = new TypeToken<Iamport.IamportResponse<Iamport.Payment>>() {
+        }.getType();
+        Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
+        order.refund();
+        orderService.statusUpdate(order);
+        return payment;
     }
 }

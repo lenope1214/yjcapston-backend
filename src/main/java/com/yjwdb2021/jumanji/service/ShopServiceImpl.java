@@ -212,7 +212,10 @@ public class ShopServiceImpl implements ShopService {
         System.out.println("보유매장 비교 매장번호 : " + shopId);
         User loginUser = userService.get(loginId);
         System.out.println("로긘 유저 이름 : " + loginUser.getName());
-        for (Shop shop : shopRepository.findByOwnerId(loginId)) {
+        List<Shop> shopList = shopRepository.findByOwnerId(loginId);
+        System.out.println("shopList size : " + shopList.size());
+        for (Shop shop : shopList) {
+            System.out.println("shop info : " + shop.getId());
             if (shop.getId().equals(shopId)) {
                 System.out.println("보유매장 매칭된 매장번호 : " + shop.getId());
                 return;
