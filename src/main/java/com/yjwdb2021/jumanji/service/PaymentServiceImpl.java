@@ -35,7 +35,7 @@ public class PaymentServiceImpl implements PaymentService {
         String loginId = userService.getMyId(authorization);
         Statistics statistics = new Statistics();
 
-        Date start, end;
+        Date start = null, end = null;
 
         // 유효성 체크
         if (shopId == null) throw new NullPointerException("Shop Id를 입력해 주세요.");
@@ -51,8 +51,11 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("지정 기준 : " + scope);
 
         Calendar cal = Calendar.getInstance(Locale.KOREA);
-        start = DateOperator.strToDate(date, false);
-        end = DateOperator.strToDate(date, false);
+        if(!scope.equals("between")){
+            start = DateOperator.strToDate(date, false);
+            end = DateOperator.strToDate(date, false);
+        }
+
 
         // 시작날짜부터 정하고 마지막 날짜 정하기.
 
