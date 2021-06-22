@@ -34,6 +34,7 @@ public class PaymentServiceImpl implements PaymentService {
     public Statistics getShopStatistics(String authorization, String shopId, String scope, String aDate, String bDate, String date) {
         String loginId = userService.getMyId(authorization);
         Statistics statistics = new Statistics();
+        Shop shop = null;
 
         Date start = null, end = null;
 
@@ -56,6 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
             end = DateOperator.strToDate(date, false);
         }
 
+        shop = shopService.isPresent(shopId);
 
         // 시작날짜부터 정하고 마지막 날짜 정하기.
 
@@ -82,6 +84,17 @@ public class PaymentServiceImpl implements PaymentService {
                 break;
             case "month" :
                 statistics.setSumPdRf(orderRepository.getSumPdRfMonth(shopId, date));
+
+                cal.setTime(start);
+                cal.set(Calendar.DATE, cal.getActualMinimum(Calendar.DAY_OF_MONTH));
+                start = cal.getTime();
+                System.out.println("달의 첫번째 요일 :"+DateOperator.YYYYMMDD.format(cal.getTime()) + ",  start : " + start.getTime());
+
+                cal.setTime(end);
+                cal.set(Calendar.DATE, cal.getActualMaximum(Calendar.DAY_OF_MONTH)); // 해당 달의 마지막 날짜로 설정
+                end = cal.getTime();
+                System.out.println("달의 마지막 요일 :"+DateOperator.YYYYMMDD.format(cal.getTime()) + ",  end : " + end.getTime());
+
                 break;
             case "date":
             default:
@@ -95,8 +108,8 @@ public class PaymentServiceImpl implements PaymentService {
         }
         System.out.println("DATE/ start : " + start + ", getTime() : " + start.getTime());
         System.out.println("DATE/ end : " + end + ", getTime() : " + end.getTime());
-        statistics.setPdOrderList(orderRepository.findByStatusAndIdIsBetweenOrderByIdDesc("pd", start, end));
-        statistics.setRfOrderList(orderRepository.findByStatusAndIdIsBetweenOrderByIdDesc("rf", start, end));
+        statistics.setPdOrderList(orderRepository.findByStatusAndShopAndIdIsBetweenOrderByIdDesc("pd",shop, start, end));
+        statistics.setRfOrderList(orderRepository.findByStatusAndShopAndIdIsBetweenOrderByIdDesc("rf",shop, start, end));
         System.out.println("====================\nsumPdRf.getSumPd() : " + statistics.getSumPdRf().getSumPd() + "\nsumPdRf.getSumRf() : " + statistics.getSumPdRf().getSumRf());
         return statistics;
     }
