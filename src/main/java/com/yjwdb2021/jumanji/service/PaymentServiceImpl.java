@@ -52,7 +52,8 @@ public class PaymentServiceImpl implements PaymentService {
         System.out.println("지정 기준 : " + scope);
 
         Calendar cal = Calendar.getInstance(Locale.KOREA);
-        if(!scope.equals("between")){
+        if(!scope.equals("between") && !date.isEmpty() && !date.equals("")){
+//            System.out.println("!between + date : " + date);
             start = DateOperator.strToDate(date, false);
             end = DateOperator.strToDate(date, false);
         }
