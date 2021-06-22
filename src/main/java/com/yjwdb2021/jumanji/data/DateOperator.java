@@ -8,15 +8,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateOperator {
 
-    public static final SimpleDateFormat YYMMDD = new SimpleDateFormat("yyMMdd"); // hh : 0-11 HH : 0-23
-    public static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd"); // hh : 0-11 HH : 0-23
-    public static final SimpleDateFormat YYYYMMDDHHMMSS = new SimpleDateFormat("yyyyMMddHHmmss");
-    public static final SimpleDateFormat SYYMMDD = new SimpleDateFormat("yy/MM/dd"); // hh : 0-11 HH : 0-23
-    public static final SimpleDateFormat SYYYYMMDD = new SimpleDateFormat("yyyy/MM/dd");
-    public static final SimpleDateFormat SYYYYMMDDHHMMSS = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    public static final SimpleDateFormat YYMMDD = new SimpleDateFormat("yyMMdd", Locale.KOREA); // hh : 0-11 HH : 0-23
+    public static final SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd", Locale.KOREA); // hh : 0-11 HH : 0-23
+    public static final SimpleDateFormat YYYYMMDDHHMMSS = new SimpleDateFormat("yyyyMMddHHmmss", Locale.KOREA);
+    public static final SimpleDateFormat SYYMMDD = new SimpleDateFormat("yy/MM/dd", Locale.KOREA); // hh : 0-11 HH : 0-23
+    public static final SimpleDateFormat SYYYYMMDD = new SimpleDateFormat("yyyy/MM/dd", Locale.KOREA);
+    public static final SimpleDateFormat SYYYYMMDDHHMMSS = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.KOREA);
     public static Date stringToMilisecond(String date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
         Date parseDate = null;

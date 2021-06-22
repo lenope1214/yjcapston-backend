@@ -3,6 +3,7 @@ package com.yjwdb2021.jumanji.data;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Fetch;
+import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.*;
@@ -105,7 +106,7 @@ public class Menu {
         private int duration;
         private char isSale;
         private char isPopular;
-        private MultipartFile img;
+        private MultipartFile img = null;
 
 //        public String getMenuId(Menu.Request request){
 //            return request.getShopId() + request.getName();

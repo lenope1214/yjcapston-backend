@@ -21,7 +21,7 @@ public interface OrderRepository extends JpaRepository<Order, Timestamp> {
     List<Order> findAllByShop_IdOrderById(String shopId);
 
     @EntityGraph(value = "Statistics.between")
-    List<Order> findByStatusAndIdIsBetweenOrderByIdDesc(String status, Date start, Date end);
+    List<Order> findByStatusAndShopAndIdIsBetweenOrderByIdDesc(String status, Shop shop, Date start, Date end);
 
 
     @Query(value = "select o.ID            id,\n" +
