@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ShopService {
 
-    public List<Shop.Dao> getList(String category, String sortTarget);
+    public List<Shop.Dao> getList(String... args);
 
     public Shop post(String authorization, Shop.PostRequest request);
 

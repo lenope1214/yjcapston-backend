@@ -7,13 +7,17 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
-
+@NamedEntityGraph(name = "Statistics.between", attributeNodes = {
+        @NamedAttributeNode("user"),
+        @NamedAttributeNode("shop")
+})
 @Getter
 @Entity
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"tableId", "reviewList"})
 @Table(name = "ORDERS")
 public class Order implements Serializable {
     @Id
@@ -38,7 +42,6 @@ public class Order implements Serializable {
     @Column(name = "pay_method")
     private String payMethod; // 결제방식
 
-
     private char accept = 'N';
 
 
@@ -50,13 +53,20 @@ public class Order implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore // 이거 없으면 fetchType lazy라서 json 변환중에 오류남.
     private User user;
-    @JoinColumn(name = "tab_id", updatable = false)@Setter
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore // 이거 없으면 fetchType lazy라서 json 변환중에 오류남.
-    private Tab tab;
+
+//    @Column(name = "tab_id")
+//    private String tabId; // 외래키 없어서 발생했던거 같은데..?
+//    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    @OneToOne(mappedBy = "order")
+    @Setter
     @JoinColumn
-    @OneToOne(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Review review;
+    private String tab_id;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviewList;
+
+//    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<OrderMenu> orderMenuList; // orderMenus DB 구조 바꿔야 함. Order_id, sequence 복합키
 
 
     @Builder
@@ -124,7 +134,7 @@ public class Order implements Serializable {
         private String payMethod; // 결제방식
         private char accept;
         private char reviewed;
-        private Tab table;
+        private String table_id;
         @Setter
         private List<OrderMenu.Response> orderMenuList;
 
@@ -144,7 +154,7 @@ public class Order implements Serializable {
             this.orderRequest = order.getOrderRequest();
             this.usePoint = order.getUsePoint();
             this.status = order.getStatus();
-            this.reviewed = order.getReview() != null ? 'Y' : 'N';
+            this.reviewed = order.getReviewList() != null ? 'Y' : 'N';
             this.amount = order.getAmount();
             this.arriveTime = order.getArriveTime();
             this.pg = order.getPg();
@@ -153,8 +163,11 @@ public class Order implements Serializable {
             if (order.getPayTime() != null)
                 this.payTime = DateOperator.dateToYYYYMMDD(order.getPayTime(), true) + DateOperator.dateToHHMM(order.getPayTime(), true);
             this.compleAmount = order.getCompleAmount();
-            this.table = order.tab;
+//            System.out.println(order.getTab().toString());
+            if(order.getTab_id() != null)this.table_id = order.getTab_id();
         }
+
+
         public void setReviewed(char v){
             this.reviewed = v;
         }
@@ -164,21 +177,24 @@ public class Order implements Serializable {
         if (request.getOrderRequest()!=null && request.orderRequest.length() > 0) {
             this.orderRequest = request.getOrderRequest();
         }
-        if(request.getAmount() == 0)throw new OrderAmountCanNotZeroException();
+//        if(request.getAmount() == 0)throw new OrderAmountCanNotZeroException();
         this.amount += request.getAmount();
         if (request.people != 0) this.people = request.people;
         if(request.getArriveTime() != null)this.arriveTime = request.getArriveTime();
         this.status = "rd";
+//        if(request.getTabNo() != 0)this.tabId = request.getShopId() + String.format("%02d", request.getTabNo()); // 일반 컬럼으로 했을 때 이렇게 사용.
     }
 
     public void pay(Payment.Request request) {
-        this.status = "pd";
         this.payMethod = request.getPayMethod();
         this.payTime = new Timestamp(System.currentTimeMillis());
         this.pg = request.getPg();
         this.compleAmount += request.getAmount(); // 여기서의 amount : 결제 요청 금액
         this.usePoint += request.getUsePoint();
     }
+
+    public void payComple(){ this.status = "pd"; }
+
 
     public void refund() {
         this.status = "rf";
@@ -188,6 +204,12 @@ public class Order implements Serializable {
         this.accept = 'Y';
     }
 
+    @NoArgsConstructor @Getter
+    public static class ContainsMenu{
+        Order order;
+        OrderMenu orderMenu;
+        char reviewed;
+    }
 
     public interface MyInfo{
         Timestamp getId();

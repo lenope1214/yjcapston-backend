@@ -9,6 +9,7 @@ import com.yjwdb2021.jumanji.data.externalData.iamport.*;
 import com.yjwdb2021.jumanji.service.OrderServiceImpl;
 import com.yjwdb2021.jumanji.service.ShopServiceImpl;
 import com.yjwdb2021.jumanji.service.UserServiceImpl;
+import javassist.tools.web.BadHttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
@@ -60,13 +61,9 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 
     private Iamport.IamportResponse<Iamport.AccessToken> getAuth() throws Exception {
         Iamport.AuthData authData = new Iamport.AuthData(api_key, api_secret);
-        System.out.println("Iamport api_key : " + api_key);
-        System.out.println("Iamport api_secret : " + api_secret);
         String authJsonData = gson.toJson(authData);
-        System.out.println("authJsonDate is null?" + (authJsonData == null));
         try {
             StringEntity data = new StringEntity(authJsonData);
-            System.out.println("data is null?" + (authJsonData == null));
             HttpPost postRequest = new HttpPost(API_URL + "/users/getToken");
             postRequest.setHeader("Accept", "application/json");
             postRequest.setHeader("Connection", "keep-alive");
@@ -142,7 +139,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
             System.out.println("response.status code : " + response.getStatusLine().getStatusCode());
             if (response.getStatusLine().getStatusCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatusLine().getStatusCode() +"\nmessage : " + response.getStatusLine().getReasonPhrase());
+                        + response.getStatusLine().getStatusCode() + "\nmessage : " + response.getStatusLine().getReasonPhrase());
             }
 
             ResponseHandler<String> handler = new BasicResponseHandler();
@@ -238,6 +235,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
     //    public IamportResponse<Iamport.Payment> cancelPayment(String authorization, Iamport.CancelData cancelData) throws Exception {
     public Iamport.IamportResponse<Iamport.Payment> cancelPayment(String authorization, String m_id) throws Exception {
         String token = this.getToken(authorization);
+//        String token = this.getAuth().getResponse().getToken();
         String loginId = userService.getMyId(authorization);
         Long orderId = Long.parseLong(m_id);
         Timestamp orderIdTime = new Timestamp(orderId);
@@ -251,19 +249,8 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
         Order order = orderService.isOwnOrder(orderIdTime, loginId);
 
         if (token != null) {
-            Iamport.CancelData cancelData = new Iamport.CancelData(m_id, false); // imp_uid 가 아니면, m_id 넣게 되어있음.
-            System.out.println("m_id : " + cancelData.getMerchant_uid());
-            String cancelJsonData = gson.toJson(cancelData);
-            StringEntity data = new StringEntity(cancelJsonData);
-
-            String response = this.postRequest("/payments/cancel", token, data);
-
-            Type listType = new TypeToken<Iamport.IamportResponse<Iamport.Payment>>() {
-            }.getType();
-            Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
-            order.refund();
-            orderService.statusUpdate(order);
-            return payment;
+            System.out.println("token : " + token);
+            return cancel(token, m_id, order);
         }
         return null;
     }
@@ -271,6 +258,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 
     public Iamport.IamportResponse<Iamport.Payment> cancelPaymentByShop(String authorization, String m_id, String shopId) throws Exception {
         String token = this.getToken(authorization);
+//        String token = this.getAuth().getResponse().getToken();
         String loginId = userService.getMyId(authorization);
         Long orderId = Long.parseLong(m_id);
         Timestamp orderIdTime = new Timestamp(orderId);
@@ -287,21 +275,29 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
 
 //        Order order = orderService.isOwnOrder(orderIdTime, loginId);
 
+        System.out.println("token : " + token);
+        System.out.println("order.getShop().getId() : " + order.getShop().getId());
+        System.out.println("shopId : " + shopId);
         if (token != null && order.getShop().getId().equals(shopId)) {
-            Iamport.CancelData cancelData = new Iamport.CancelData(m_id, false); // imp_uid 가 아니면, m_id 넣게 되어있음.
-            System.out.println("m_id : " + cancelData.getMerchant_uid());
-            String cancelJsonData = gson.toJson(cancelData);
-            StringEntity data = new StringEntity(cancelJsonData);
-
-            String response = this.postRequest("/payments/cancel", token, data);
-
-            Type listType = new TypeToken<Iamport.IamportResponse<Iamport.Payment>>() {
-            }.getType();
-            Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
-            order.refund();
-            orderService.statusUpdate(order);
-            return payment;
+            return cancel(token, m_id, order);
         }
-        return null;
+        throw new BadHttpRequest();
+    }
+
+    private Iamport.IamportResponse<Iamport.Payment> cancel(String token, String m_id, Order order) throws UnsupportedEncodingException, URISyntaxException {
+        Iamport.CancelData cancelData = new Iamport.CancelData(m_id, false); // imp_uid 가 아니면, m_id 넣게 되어있음.
+        System.out.println("m_id : " + cancelData.getMerchant_uid());
+        String cancelJsonData = gson.toJson(cancelData);
+        StringEntity data = new StringEntity(cancelJsonData);
+
+        String response = this.postRequest("/payments/cancel", token, data);
+
+        Type listType = new TypeToken<Iamport.IamportResponse<Iamport.Payment>>() {
+        }.getType();
+        Iamport.IamportResponse<Iamport.Payment> payment = gson.fromJson(response, listType);
+        order.refund();
+        orderService.statusUpdate(order);
+        System.out.println("환불됨. " + order.getStatus());
+        return payment;
     }
 }

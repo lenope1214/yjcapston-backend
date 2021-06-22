@@ -3,8 +3,10 @@ package com.yjwdb2021.jumanji.service;
 import com.yjwdb2021.jumanji.data.*;
 import com.yjwdb2021.jumanji.repository.OrderRepository;
 import com.yjwdb2021.jumanji.repository.ReviewRepository;
+import com.yjwdb2021.jumanji.repository.TableRepository;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderHasExistException;
 import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotFoundException;
+import com.yjwdb2021.jumanji.service.exception.orderException.OrderNotMineException;
 import com.yjwdb2021.jumanji.service.exception.shopException.ShopNotOpenException;
 import com.yjwdb2021.jumanji.service.exception.tableException.TableAlreadUsingException;
 import com.yjwdb2021.jumanji.service.interfaces.OrderService;
@@ -31,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     ShopServiceImpl shopService;
     @Autowired
     TableServiceImpl tableService;
+    @Autowired
+    TableRepository tableRepository;
 
 //    public ResponseEntity<?> getCartId() {
 //        @Getter
@@ -93,7 +97,6 @@ public class OrderServiceImpl implements OrderService {
                 .shop(shop)
                 .user(user)
                 .build();
-                orderRepository.save(order);
         return order;
     }
 
@@ -114,17 +117,17 @@ public class OrderServiceImpl implements OrderService {
 
         isOpen(shop);
         order = request.getOrderId() != null ? isOwnOrder(request.getOrderId(), loginId) : post(loginId, user, shop, request);
-
         order.patch(request);
-        System.out.println("arrtime : " + order.getArriveTime());
+
         if(request.getTabNo() != 0){
             table = tableService.isPresent(request.getShopId() + String.format("%02d",request.getTabNo()));
-            if(table.getOrder() != null)throw new TableAlreadUsingException();
-            table.setOrder(order);
-            tableService.save(table);
-            order.setTab(table);
+            if(table.getOrder() != null && !table.getOrder().getId().equals(request.getOrderId()))throw new TableAlreadUsingException();
+            else table.setOrder(order);
+            tableRepository.saveAndFlush(table);
+            order.setTab_id(table.getId());
+//            System.out.println("테이블 정보 추가... get Id : " + order.getTab().getId());
         }
-        order = orderRepository.saveAndFlush(order);
+        orderRepository.saveAndFlush(order);
         return order;
     }
 
@@ -142,7 +145,7 @@ public class OrderServiceImpl implements OrderService {
     public Order isPresent(Timestamp orderId) {
         Optional<Order> order =orderRepository.findById(orderId);
         if (order.isPresent()) return order.get();
-        throw new OrderNotFoundException();
+        throw new OrderNotFoundException(orderId.toString());
     }
 
     public boolean isEmpty(Timestamp orderId) {
@@ -154,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = isPresent(orderId);
         String _uId =order.getUser().getId();
         if(_uId.equals(userId))return order;
-        else throw new OrderNotFoundException(""+orderId.getTime());
+        else throw new OrderNotMineException(""+orderId.getTime());
     }
 
     public List<Order> getListByShopId(String authorization, String shopId) {
@@ -165,12 +168,7 @@ public class OrderServiceImpl implements OrderService {
         shopService.isOwnShop(loginId, shopId);
 
         List<Order> orderList;
-        orderList = orderRepository.findAllByShop_Id(shopId);
-        System.out.println("해당 매장의 주문목록");
-        for(Order order: orderList){
-            System.out.println("getOrderRequest : " + order.getOrderRequest() + "\n");
-            System.out.println("getUser().getName()" + order.getUser().getName());
-        }
+        orderList = orderRepository.findAllByShop_IdOrderById(shopId);
         return orderList;
     }
 

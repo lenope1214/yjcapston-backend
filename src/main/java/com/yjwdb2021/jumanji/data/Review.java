@@ -31,9 +31,10 @@ public class Review {
     private String imgUrl;//이미지경로
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="user_id",nullable = false) @JsonIgnore
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(nullable = false) @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "shop_id", nullable = false) @JsonIgnore
     private Shop shop;// 식당번호
-    @OneToOne(fetch = FetchType.LAZY) @JoinColumn(nullable = false) @JsonIgnore
+
+    @ManyToOne(fetch = FetchType.EAGER) @JoinColumn(name = "order_id", nullable = false) @JsonIgnore
     private Order order;// 식당번호
 
     @Builder(builderMethodName = "init")

@@ -53,9 +53,6 @@ public class ReviewServiceImpl implements BasicService<Review, Review.Request, S
 
     @Override
     public Review post(@Nullable String authorization, Review.Request request) {
-        System.out.println("리뷰등록's shopId : " + request.getShopId());
-        System.out.println("리뷰등록's orderId : " + request.getOrderId());
-
         String loginId = userService.getMyId(authorization);
         String uri = "shop/" + request.getShopId() + "/review/"; // TODO 얘를 storage service에서 만들어 주는 메소드를 만들어야 할듯.
         String imgPath = "";
@@ -76,11 +73,8 @@ public class ReviewServiceImpl implements BasicService<Review, Review.Request, S
         Timestamp regTime = new Timestamp(regDate.getTime());
         Review review;
         String reviewId = request.getShopId().substring(0,2) + DateOperator.dateToYYYYMMDD(regDate, false);
-        System.out.println("개수 가져오기 전 reivewId : " + reviewId);
         int countDayReviews = reviewRepository.countByIdStartingWith(reviewId);
-        System.out.println("해당 날짜 리뷰 개수 : " + countDayReviews);
         reviewId = StringUtils.append(reviewId, String.format("%03d", countDayReviews));
-        System.out.println("개수 붙인 후 reivewId : " + reviewId);
 //        order.setReviewedY();
         orderRepository.save(order);
         review = Review.init()
@@ -95,7 +89,6 @@ public class ReviewServiceImpl implements BasicService<Review, Review.Request, S
                 .order(order)
                 .build();
         review = reviewRepository.save(review);
-        System.out.println("등록된 리뷰의 imgUrl : " + review.getImgUrl() );
         return review;
     }
 
@@ -132,8 +125,6 @@ public class ReviewServiceImpl implements BasicService<Review, Review.Request, S
     public Review isOwnReview(String loginId, String reviewId){
         Review r = (Review) isPresent(reviewId);
         String reviewer = r.getUser().getId();
-        System.out.println("리뷰 작성자 : " + reviewer);
-        System.out.println("삭제 요청자 : " + loginId);
         if(reviewer.equals(loginId))return r;
         throw new ReviewIsNotYoursException();
     }

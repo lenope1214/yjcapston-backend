@@ -41,7 +41,8 @@ public class UserShopMark {
 //        }
         public Response(List<Shop> markShopList){
             for(Shop shop : markShopList){
-                this.shopList.add(new Shop.Response(shop));
+                Shop.ResponseMarked shopResponse = new Shop.ResponseMarked(shop, 'Y');
+                this.shopList.add(shopResponse);
             }
         }
     }

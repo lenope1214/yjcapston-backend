@@ -43,7 +43,7 @@ public class PaymentController {
     }
 
     @Transactional
-    @GetMapping("payments/complite")
+    @GetMapping("payments/complete")
     public ResponseEntity<?> complePayment(@RequestParam("imp_uid") String impUid, @RequestParam("merchant_uid") String merchantUid, HttpServletRequest request) throws Exception {
         System.out.println("request info" +
                 "request.getQueryString" + request.getQueryString() + "\n" +
@@ -84,17 +84,12 @@ public class PaymentController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-
-    @Transactional
-    @GetMapping("shops/{shopId}/payments/statistics")
-    public ResponseEntity<?> getStatistics(@RequestHeader String authorization,
-                                           @PathVariable String shopId,
-                                           @Nullable @RequestParam String scope,
-                                           @Nullable @RequestParam String aDate,
-                                           @Nullable @RequestParam String bDate) {
-        Statistics.SumPdRf statistics = paymentService.getShopStatistics(authorization, shopId, scope, aDate, bDate);
-//        statistics
-        return new ResponseEntity<>(statistics, HttpStatus.OK);
+    @PostMapping("payments/complete")
+    public ResponseEntity<?> paymentComplite(@RequestBody Payment.Request request){
+        paymentService.payComplite(request);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 
 }

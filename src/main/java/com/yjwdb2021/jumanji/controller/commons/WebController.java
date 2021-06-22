@@ -116,10 +116,14 @@ public class WebController {
     @GetMapping("daumAddr")
     public String daumAddr(){ return "daumAddr";}
 
-    @Transactional
     @GetMapping("/androidPayment")
     public String imptAndroidPayment(){
         return "iamportAndroidPayment";
+    }
+
+    @GetMapping("/androidQrPayment")
+    public String imptAndroidQrPayment(){
+        return "iamportAndroidQrPayment";
     }
 
     @GetMapping("/androidPayComple")

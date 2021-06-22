@@ -27,7 +27,7 @@ public class Tab implements Serializable {
     @Column
     private char using;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "order_id")
     @JsonIgnore
     private Order order;
@@ -48,7 +48,13 @@ public class Tab implements Serializable {
     }
 
     public void setOrder(Order order){
+        this.setUsing('Y');
         this.order = order;
+    }
+
+    public void pay() {
+        this.setOrder(null);
+        this.setUsing('N');
     }
 
     @Getter @AllArgsConstructor @NoArgsConstructor
