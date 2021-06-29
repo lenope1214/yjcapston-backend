@@ -264,7 +264,7 @@ public class IamportClientService implements com.yjwdb2021.jumanji.service.exter
         Timestamp orderIdTime = new Timestamp(orderId);
         Order order = null;
         Shop shop = null;
-        System.out.println("cancel info >>>>>>>>>" +
+        System.out. println("cancel info >>>>>>>>>" +
                 "loginId : " + loginId + "\n" +
                 "orderId : " + orderId + "\n" +
                 "orderIdTime : " + orderIdTime);
