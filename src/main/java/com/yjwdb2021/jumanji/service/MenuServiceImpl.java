@@ -69,6 +69,9 @@ public class MenuServiceImpl {
     public Menu post(String authorization, Menu.Request request) {
         Menu menu;
         Shop shop;
+        System.out.println("request is null ? " + (request == null));
+        System.out.println("shopID is  ? " + (request.getShopId()));
+        System.out.println("shopID is null ? " + (request.getShopId() == null));
         String menuId = request.getShopId().substring(0, 2) + 'm' + DateOperator.dateToYYYYMMDDHHMMSS(new Date());
 
         isEmpty(menuId, request.getName());
