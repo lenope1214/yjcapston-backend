@@ -63,7 +63,8 @@ public class MenuController  {
     @PostMapping("menus") // post
     public ResponseEntity<?> postMenu(@RequestHeader String authorization,
                                       // required = false 해줌으로써 img가 null이 아니어도 되게 만듦.
-                                      @RequestParam(required = false) Menu.Request request) {
+//                                      @RequestParam(required = false)
+                                                  Menu.Request request) {
         Menu menu = menuService.post(authorization, request);
         Menu.Response response = new Menu.Response(menu);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
