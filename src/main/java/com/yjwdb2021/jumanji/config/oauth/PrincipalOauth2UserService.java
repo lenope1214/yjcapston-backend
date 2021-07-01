@@ -1,6 +1,7 @@
 package com.yjwdb2021.jumanji.config.oauth;
 
 import com.yjwdb2021.jumanji.config.auth.PrincipalDetails;
+import com.yjwdb2021.jumanji.config.jwt.JwtTokenUtil;
 import com.yjwdb2021.jumanji.config.oauth.provider.FacebookUserInfo;
 import com.yjwdb2021.jumanji.config.oauth.provider.GoogleUserInfo;
 import com.yjwdb2021.jumanji.config.oauth.provider.NaverUserInfo;
@@ -24,11 +25,13 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     // userRequest 는 code를 받아서 accessToken을 응답 받은 객체
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oAuth2User = super.loadUser(userRequest); // google의 회원 프로필 조회
+        OAuth2User oAuth2User = super.loadUser(userRequest); // 소셜의 회원 프로필 조회
 
         System.out.println("PrincipalOauth2UserService -> loadUser -> ");
         // code를 통해 구성한 정보
@@ -82,6 +85,8 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService {
                     .build();
             userRepository.save(user);
         }
+
+
 
         return new PrincipalDetails(user, oAuth2User.getAttributes());
     }

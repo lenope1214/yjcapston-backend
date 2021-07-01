@@ -149,4 +149,11 @@ public class OrderController {
 //        orderService.delete(authorization, orderId);
 //        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //    }
+
+    @Transactional
+    @GetMapping("/allOrders") //TODO 임시 삭제용 나중에 지워야 함.
+    public ResponseEntity<?> deleteAll(){
+        orderService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
