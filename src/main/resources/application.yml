@@ -1,0 +1,7 @@
+# rediredctUri 는 사용자가 구글에서 Authentication을 성공 후 authorization code를 전달할 제 도메인의 endPoint다.
+# gSpring Security에서는 google, facebook과 같이 기본으로 제공해주는 서비스도 있다. 네이버는 없기 때문에 설정해 명시해준다.
+# google redirect uri = /login/oauth2/code/google
+app:
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:8088/login/oauth2/code/google

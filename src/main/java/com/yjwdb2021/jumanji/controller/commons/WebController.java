@@ -1,6 +1,8 @@
 package com.yjwdb2021.jumanji.controller.commons;
 
 import com.yjwdb2021.jumanji.config.auth.PrincipalDetails;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -9,9 +11,11 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.transaction.Transactional;
+import java.util.Map;
 
 @Controller
 public class WebController {
@@ -24,6 +28,14 @@ public class WebController {
     @GetMapping("/")
     public String index(){
         return "index";
+    }
+
+    @GetMapping("/login/oauth2/code/google")
+    public ResponseEntity<?> oAuth2Google(){
+//        System.out.println("Headers : " + headers.toString());
+//        jwtTokenUtil.generateToken();
+        System.out.println("구글 로그인!!!!!!!!!!!!!!!!!!!!!!");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 //    @GetMapping("/test/login")

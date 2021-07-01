@@ -1,4 +1,4 @@
-package com.yjwdb2021.jumanji.config.oauth.provider;
+package com.yjwdb2021.jumanji.config.oauth2.provider;
 
 public interface OAuth2UserInfo {
     String getProviderId();  // google_sub facebook_id

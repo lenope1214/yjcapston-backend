@@ -22,8 +22,3 @@ hooks:
     - location: deploy.bat
       timeout: 70000
       # runas: root  windows에선 지원x
-
-app:
-  oauth2:
-    authorizedRedirectUris:
-      - http://localhost:8088/oauth2/redirect
