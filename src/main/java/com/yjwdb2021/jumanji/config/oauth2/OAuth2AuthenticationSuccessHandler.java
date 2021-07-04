@@ -69,7 +69,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         );
         String token = jwtTokenUtil.createToken(authentication);
 
-        return UriComponentsBuilder.fromUriString(targetUrl)
+        return UriComponentsBuilder.fromUriString(targetUrl) //TODO 쿼리스트링으로 반환하는데 이를 Response body에 넣고싶음.
                 .queryParam("token", token)
                 .build().toUriString();
     }
