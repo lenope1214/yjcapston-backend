@@ -11,4 +11,6 @@ public interface TableRepository extends JpaRepository<Tab, String > {
     public List<Tab> findByIdContains(String shopId);
 
     Tab findByOrderId(Timestamp orderId);
+
+    List<Tab> findByOrderNotNull();
 }

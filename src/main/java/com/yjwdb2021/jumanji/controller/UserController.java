@@ -1,5 +1,6 @@
 package com.yjwdb2021.jumanji.controller;
 
+import com.yjwdb2021.jumanji.config.jwt.JwtTokenUtil;
 import com.yjwdb2021.jumanji.data.Order;
 import com.yjwdb2021.jumanji.data.User;
 import com.yjwdb2021.jumanji.service.OrderServiceImpl;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 //@CrossOrigin(origins = "http://localhost:3000")
@@ -21,7 +23,15 @@ public class UserController  {
     UserServiceImpl userService;
     @Autowired
     OrderServiceImpl orderService;
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
 
+//    @GetMapping("/login/oauth2/code/google")
+//    public ResponseEntity<?> loginOAuth2(@RequestHeader Map<?, ?> headers){
+//        System.out.println("Headers : " + headers.toString());
+////        jwtTokenUtil.generateToken();
+//        return new ResponseEntity<>(HttpStatus.OK);
+//    }
 
     @Transactional(readOnly = true)
     @GetMapping("users")  // myInfo

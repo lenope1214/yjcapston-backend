@@ -43,6 +43,13 @@ public class ApiController {
         return userService.login(user); // 로그인은 이렇게 두자.
     }
 
+    @Transactional(readOnly = true)
+    @GetMapping("oauth/login")
+    public ResponseEntity<?> oAuthLogin(@RequestParam String token) {
+        System.out.println("/api/v1/oauth/login 요청");
+        return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
 
     @GetMapping("validate/{id}") // validate
     public ResponseEntity<?> validateOne(@PathVariable String id) {

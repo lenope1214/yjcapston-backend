@@ -201,5 +201,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
-
+    public void deleteAll() {
+        List<Tab> tabList = tableRepository.findByOrderNotNull();
+        for(Tab tab : tabList){
+            tab.pay();
+            tableRepository.save(tab);
+        }
+        orderRepository.deleteAll();
+    }
 }
