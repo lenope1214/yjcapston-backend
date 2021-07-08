@@ -67,7 +67,7 @@ public class ReviewServiceImpl implements BasicService<Review, Review.Request, S
         isEmpty(request.getOrderId()); // 같은 주문 번호로 리뷰 여러번 쓰는거 막기
         //TODO 추후에 결제완료 후 일정 시간 뒤에 적게 해야 함.
 //        System.out.println(request.getImg().getName());
-        if (request.getImg() != null)
+        if (request.getImg() != null && request.getImg().getSize() > 0)
             imgPath = storageService.store(request.getImg(), request.getImg().getResource().getFilename().replace(" ", "_"), uri.split("/"));
         Date regDate = new Date();
         Timestamp regTime = new Timestamp(regDate.getTime());
