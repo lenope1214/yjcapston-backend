@@ -1,16 +1,18 @@
 package com.yjwdb2021.jumanji.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
 
 @Getter
 @Entity
-@Table(name="coupons")
+@Table(name="coupons") @NoArgsConstructor
 public class Coupon {
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+//    @GeneratedValue(strategy= GenerationType.Identity)
     @Column(length = 12)
     private Long id;//쿠폰번호
     @Column(length = 30)
@@ -23,7 +25,23 @@ public class Coupon {
 //    @JoinColumn(name="account",nullable = false)
 //    private Account id; //아이디
 
-    public class Request{
 
+    public Coupon(Coupon.Request request){
+        this.id = 1L;
+        this.name = request.getName();
+    }
+
+    @Getter
+    public static class Request{
+        private String name;
+    }
+
+    @NoArgsConstructor @AllArgsConstructor @Getter
+    public static class Response{
+        private String name;
+
+        public Response(Coupon coupon){
+            this.name = coupon.getName();
+        }
     }
 }
