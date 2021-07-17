@@ -113,6 +113,13 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 
+    @Transactional
+    public JwtResponse oAuthLogin(String token) {
+        String loginId = getMyId(token);
+        User userEntity = isPresent(loginId);
+        return new JwtResponse(token, userEntity.getRole());
+    }
+
     public void checkPW(User.Request _user, String encodedPassword) {
         String rawPassword = _user.getPassword();
         System.out.println("rawPw : " + rawPassword);

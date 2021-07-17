@@ -1,5 +1,6 @@
 package com.yjwdb2021.jumanji.controller;
 
+import com.yjwdb2021.jumanji.config.jwt.JwtResponse;
 import com.yjwdb2021.jumanji.config.jwt.JwtTokenUtil;
 import com.yjwdb2021.jumanji.data.User;
 import com.yjwdb2021.jumanji.service.ShopServiceImpl;
@@ -41,6 +42,14 @@ public class ApiController {
     public ResponseEntity<?> login(@RequestBody User.Request user) {
         System.out.println("/api/v1/login 요청");
         return userService.login(user); // 로그인은 이렇게 두자.
+    }
+
+    @Transactional(readOnly = true)
+    @GetMapping("oauth/login")
+    public ResponseEntity<?> oAuthLogin(@RequestParam String token) {
+        System.out.println("/api/v1/oauth/login 요청");
+        JwtResponse jwtResponse = userService.oAuthLogin(token);
+        return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 
 

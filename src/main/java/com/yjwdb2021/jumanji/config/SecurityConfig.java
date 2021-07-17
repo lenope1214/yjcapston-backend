@@ -5,7 +5,9 @@ package com.yjwdb2021.jumanji.config;
 
 import com.yjwdb2021.jumanji.config.auth.PrincipalDetailsService;
 import com.yjwdb2021.jumanji.config.jwt.JwtRequestFilter;
-import com.yjwdb2021.jumanji.config.oauth.PrincipalOauth2UserService;
+import com.yjwdb2021.jumanji.config.oauth2.OAuth2AuthenticationFailureHandler;
+import com.yjwdb2021.jumanji.config.oauth2.OAuth2AuthenticationSuccessHandler;
+import com.yjwdb2021.jumanji.config.oauth2.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -40,6 +42,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final HttpHeaders httpHeaders = new HttpHeaders();
     @Autowired
     private PrincipalOauth2UserService principalOauth2UserService;
+//    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+    private final OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler;
 
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -130,7 +136,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .oauth2Login()
                     .loginPage("/loginForm")
                     .userInfoEndpoint()
-                    .userService(principalOauth2UserService); // 후처리 서비스 지정
+                    .userService(principalOauth2UserService)
+                .and()
+                    .successHandler(oAuth2AuthenticationSuccessHandler)
+                    .failureHandler(oAuth2AuthenticationFailureHandler); // 후처리 서비스 지정
 //                .and()
 //                .formLogin()
 ////                .loginPage("/api/v1/login") 	// 로그인 페이지 url
@@ -147,6 +156,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         // username password 확인 필터 전에 jwt있는지 확인을 위해!
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterAfter(jwtAuthenticationFilter, LogoutFilter.class);
         httpHeaders.add("Content-Type", "text/html; charset=UTF-8");
     }
 

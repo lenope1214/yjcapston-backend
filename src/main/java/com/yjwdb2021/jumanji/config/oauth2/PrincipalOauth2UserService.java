@@ -1,11 +1,11 @@
-package com.yjwdb2021.jumanji.config.oauth;
+package com.yjwdb2021.jumanji.config.oauth2;
 
 import com.yjwdb2021.jumanji.config.auth.PrincipalDetails;
 import com.yjwdb2021.jumanji.config.jwt.JwtTokenUtil;
-import com.yjwdb2021.jumanji.config.oauth.provider.FacebookUserInfo;
-import com.yjwdb2021.jumanji.config.oauth.provider.GoogleUserInfo;
-import com.yjwdb2021.jumanji.config.oauth.provider.NaverUserInfo;
-import com.yjwdb2021.jumanji.config.oauth.provider.OAuth2UserInfo;
+import com.yjwdb2021.jumanji.config.oauth2.provider.FacebookUserInfo;
+import com.yjwdb2021.jumanji.config.oauth2.provider.GoogleUserInfo;
+import com.yjwdb2021.jumanji.config.oauth2.provider.NaverUserInfo;
+import com.yjwdb2021.jumanji.config.oauth2.provider.OAuth2UserInfo;
 import com.yjwdb2021.jumanji.data.User;
 import com.yjwdb2021.jumanji.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -7,8 +7,13 @@ import com.yjwdb2021.jumanji.repository.UserRepository;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
+import java.nio.file.attribute.UserPrincipal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -121,5 +126,15 @@ public class JwtTokenUtil implements JwtProperties {
             log.error("JWT claims string is empty.");
             throw ex;
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        System.out.println("Query  String : " + request.getQueryString());
+        return request.getQueryString();
+    }
+
+    public String createToken(Authentication authentication) {
+        PrincipalDetails principalDetails = (PrincipalDetails)authentication.getPrincipal();
+        return generateToken(principalDetails.getUsername());
     }
 }

@@ -1,17 +1,22 @@
 package com.yjwdb2021.jumanji.controller.commons;
 
 import com.yjwdb2021.jumanji.config.auth.PrincipalDetails;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
 
 @Controller
 public class WebController {
@@ -22,8 +27,24 @@ public class WebController {
     }
 //
     @GetMapping("/")
-    public String index(){
+    public String index(@Nullable @RequestParam String token) throws URISyntaxException {
+        System.out.println("토큰 : " + token);
+        if(token != null){
+//            URI redirectUri = new URI("http://www.naver.com");
+//            HttpHeaders httpHeaders = new HttpHeaders();
+//            httpHeaders.setLocation(redirectUri);
+//            return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
+            return "redirect:http://localhost:8088/api/v1/oauth/login?token="+token;
+        }
         return "index";
+    }
+
+    @GetMapping("/login/oauth2/code/google")
+    public ResponseEntity<?> oAuth2Google(){
+//        System.out.println("Headers : " + headers.toString());
+//        jwtTokenUtil.generateToken();
+        System.out.println("구글 로그인!!!!!!!!!!!!!!!!!!!!!!");
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 //    @GetMapping("/test/login")
