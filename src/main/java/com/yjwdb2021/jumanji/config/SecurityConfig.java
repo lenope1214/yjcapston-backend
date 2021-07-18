@@ -133,14 +133,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl("/") // 로그인 성공하면 갈 주소.
                     .permitAll()
                 .and()
-                .oauth2Login()
-                    .loginPage("/loginForm")
-                    .userInfoEndpoint()
-                    .userService(principalOauth2UserService)
-                .and()
-                    .successHandler(oAuth2AuthenticationSuccessHandler)
-                    .failureHandler(oAuth2AuthenticationFailureHandler); // 후처리 서비스 지정
+//                .oauth2Login()
+//                    .loginPage("/loginForm")
+//                    .userInfoEndpoint()
+//                    .userService(principalOauth2UserService)
 //                .and()
+//                    .successHandler(oAuth2AuthenticationSuccessHandler)
+//                    .failureHandler(oAuth2AuthenticationFailureHandler); // 후처리 서비스 지정
+//                .and()
+
 //                .formLogin()
 ////                .loginPage("/api/v1/login") 	// 로그인 페이지 url
 //                .loginProcessingUrl("/api/v1/login")  // view form의 action과 맞아야함
