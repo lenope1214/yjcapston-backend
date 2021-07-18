@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/")
 public class ApiController {
     @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    @Autowired
     UserServiceImpl userService;
     @Autowired
     ShopServiceImpl shopService;
@@ -45,10 +43,11 @@ public class ApiController {
     }
 
     @Transactional(readOnly = true)
-    @GetMapping("oauth/login")
-    public ResponseEntity<?> oAuthLogin(@RequestParam String token) {
+    @PostMapping("oauth/login")
+    public ResponseEntity<?> oAuthLogin(@RequestBody User.Request request) {
         System.out.println("/api/v1/oauth/login 요청");
-        JwtResponse jwtResponse = userService.oAuthLogin(token);
+        JwtResponse jwtResponse = userService.oAuthLogin(request);
+        if(jwtResponse == null)return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(jwtResponse, HttpStatus.OK);
     }
 

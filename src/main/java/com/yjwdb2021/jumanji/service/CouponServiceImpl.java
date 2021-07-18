@@ -28,7 +28,10 @@ public class CouponServiceImpl implements BasicService<Coupon, Coupon.Request, L
 
     @Override
     public Coupon post(@Nullable String authorization, Coupon.Request request) {
-        return null;
+        Coupon coupon = new Coupon(request);
+//        couponRepository;
+        // select * from coupons where id = ?;
+        return couponRepository.save(coupon);
     }
 
     @Override

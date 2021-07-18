@@ -31,6 +31,7 @@ public class User implements Serializable {
     private String address; // 주소
     @Column(name = "address_detail")
     private String addressDetail;
+    @DateTimeFormat(pattern = "yyyyMMdd")
     private Date birthday; // 생년월일
     private String phone; // 전화번호
     @Column(name = "is_wdrw")
@@ -89,6 +90,8 @@ public class User implements Serializable {
         private String phone; // 전화번호
         private String role; // 권한   ROLE_USER, ROLE_OWNER, ROLE_ADMIN
         private String deviceToken;
+        private String provider;
+        private String providerId;
     }
 
     @Getter @NoArgsConstructor

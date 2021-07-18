@@ -114,10 +114,41 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public JwtResponse oAuthLogin(String token) {
-        String loginId = getMyId(token);
-        User userEntity = isPresent(loginId);
-        return new JwtResponse(token, userEntity.getRole());
+    public JwtResponse oAuthLogin(User.Request request) {
+        // oauth 로그인은 uid를 받게되고 provider랑 uid를 통해서 해당 아이디 체크.
+        // 없으면 회원가입 진행 있으면 로그인
+
+        Optional<User> userOptional =
+                userRepository.findByProviderAndProviderId(request.getProvider(), request.getProviderId());
+
+        User user;
+        if (userOptional.isPresent()) {
+            user = userOptional.get();
+            // user가 존재하면 update 해주기
+            //user.setEmail(oAuth2UserInfo.getEmail());
+//            userRepository.save(user);
+        } else {
+
+            // user의 패스워드가 null이기 때문에 OAuth 유저는 일반적인 로그인을 할 수 없음.
+            user = User.createUser()
+                    .id(request.getProvider() + "_" + request.getProviderId())
+                    .name(request.getName())
+                    .email(request.getEmail())
+                    .role("ROLE_USER")
+                    .provider(request.getProvider())
+                    .provider_id(request.getProviderId())
+                    .phone(request.getPhone())
+                    .address(request.getAddress())
+                    .addressDetail(request.getAddressDetail())
+                    .birthday(request.getBirthday())
+                    .sign_date(new Date())
+                    .build();
+            userRepository.save(user);
+        }
+
+        final String access_token = jwtTokenUtil.generateToken(user.getId());
+        JwtResponse jwtResponse = new JwtResponse(access_token, user.getRole());
+        return jwtResponse;
     }
 
     public void checkPW(User.Request _user, String encodedPassword) {

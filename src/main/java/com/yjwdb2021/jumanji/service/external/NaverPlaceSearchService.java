@@ -35,7 +35,7 @@ public class NaverPlaceSearchService implements ExternalApiService {
         Map<String, String> requestHeaders = new HashMap<>();
         requestHeaders.put("X-Naver-Client-Id", "3DwdaAu9DxPsYTNgPQGD");
         requestHeaders.put("X-Naver-Client-Secret", "Fop9WootlX");
-        String responseBody = get(apiURL,requestHeaders, "GET");
+        String responseBody = request(apiURL,requestHeaders, "GET");
 
         System.out.println("네이버에서 받은 결과 = " + responseBody);
         System.out.println("-----------------------------------------");

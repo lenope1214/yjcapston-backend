@@ -12,7 +12,7 @@ import java.util.Map;
 
 public interface ExternalApiService {
 
-    default String get(String apiUrl, Map<String, String> requestHeaders, String Method){
+    default String request(String apiUrl, Map<String, String> requestHeaders, String Method){
         HttpURLConnection con = connect(apiUrl);
         try {
             con.setRequestMethod(Method);
