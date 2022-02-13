@@ -21,23 +21,29 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // java에서 json 형태를 만들어주는 라이브러리. 백엔드 하다보면 쓸 일이 언젠간 생깁니다.
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.6'
 
+    // 소셜 로그인 할 수 있게 해주는 애
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: '2.4.3'
 //    implementation group: 'org.springframework.boot', name: 'spring-security-oauth2'
 
+    // json web token -> 사용자가 많아질 수록 같이 커지게 되는데 서버가 증설이 되잖아요?
+    // 그러면 요청이 들어올떄 각자 다른 서버로 요청을 보내게 되는데,
+    // 서버 안에 데이터를 저장하는 공간이 있고 각 서버마다 다르기 때문에
+    // 로그인 하면 쿠키를 넘겨 주는데 같은 사이트 내에 다른 서버로 요청이 가면
+    // 인식을 못해서 로그인이 안된 상태가 됨. -> 해결하기 위해 나옴 jwt
+    // 다른 서버로 요청을 해도 인증이 되도록. front : js를 쓰는 react, vue, angular -> jwt
     implementation group: 'com.auth0', name: 'java-jwt', version: '3.13.0'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.1.1.RELEASE'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
+    implementation 'org.projectlombok:lombok:1.18.16'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
@@ -74,6 +80,8 @@ dependencies {
 //    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.14.1'
 
 //    compile fileTree(dir: 'lib', include: ['*.jar'])
+
+
 
     //aws
     implementation platform('com.amazonaws:aws-java-sdk-bom:1.11.13')

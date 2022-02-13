@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;

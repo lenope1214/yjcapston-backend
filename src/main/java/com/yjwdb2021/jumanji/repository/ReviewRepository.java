@@ -20,9 +20,9 @@ public interface ReviewRepository extends JpaRepository<Review, String> {
 
     Optional<Review> findByOrderId(Timestamp orderId);
 
-    @Query(value = "select r.id from ORDERS o\n" +
+    @Query(value = "select r.id from ORDERS o\n" + // ORM ibytis mybatis
             "left join REVIEWS R on o.ID = R.ORDER_ID\n" +
-            "where r.USER_ID = :userId",nativeQuery = true)
+            "where r.USER_ID = :userId",nativeQuery = true) // jpa 실력이 안되서 못하는거지
     String myReviewList(String userId);
 
     List<Review> findAllByUser_IdOrderByIdDesc(String userId);

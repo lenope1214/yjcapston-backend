@@ -7,5 +7,4 @@ import java.util.List;
 
 public interface ChatbotRepository extends JpaRepository<Chatbot, Long> {
     List<Chatbot> findByShop_IdOrderByIdDesc(String shopId);
-
 }

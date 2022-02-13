@@ -24,7 +24,7 @@ public class EmployeeController {
     @Transactional(readOnly = true)
     @GetMapping("shops/{shopId}/employees")
     public ResponseEntity<?> getShopEmployees(@RequestHeader String authorization, @PathVariable String shopId) {
-        List<Employee> employeeList = employeeService.getList(authorization, shopId);
+        List<Employee> employeeList = employeeService.getList(authorization, shopId, "asdfasdf", "asdfasdf", "Asdfasdfasdf", "asdfasdf");
         List<Employee.Response> response = new ArrayList<>();
         for (Employee e : employeeList) {
             response.add(new Employee.Response(e));
@@ -87,4 +87,5 @@ public class EmployeeController {
         EmployeeCommutes.Response response = new EmployeeCommutes.Response(employeeCommutes);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 }

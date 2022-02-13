@@ -23,31 +23,31 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name="users")
 public class User implements Serializable {
-    @Id
-    private String id; //아이디
-    private String password; // 비밀번호
-    private String name; // 이름
-    private String email; // 이메일
-    private String address; // 주소
-    @Column(name = "address_detail")
-    private String addressDetail;
-    @DateTimeFormat(pattern = "yyyyMMdd")
-    private Date birthday; // 생년월일
-    private String phone; // 전화번호
-    @Column(name = "is_wdrw")
-    private char isWdrw; // 탈퇴여부
-    private String role; // 권한   u, o, a
-    @DateTimeFormat(pattern = "yyyyMMdd")
-    @Column(name = "sign_date")
-    private Date signDate; // 가입날짜
-    @Column(name = "vip_level")
-    private int level; // 등급
-    private int point; // 포인트
-    private String provider; // 소셜
-    @Column(name = "provider_id")
-    private String providerId; // 해당 소셜에서의 아이디(primary key)
-    @Column(name = "device_token")
-    private String deviceToken;
+        @Id
+        private String id; //아이디
+        private String password; // 비밀번호
+        private String name; // 이름
+        private String email; // 이메일
+        private String address; // 주소
+        @Column(name = "address_detail")
+        private String addressDetail;
+        @DateTimeFormat(pattern = "yyyyMMdd")
+        private Date birthday; // 생년월일
+        private String phone; // 전화번호
+        @Column(name = "is_wdrw")
+        private char isWdrw; // 탈퇴여부
+        private String role; // 권한   u, o, a
+        @DateTimeFormat(pattern = "yyyyMMdd")
+        @Column(name = "sign_date")
+        private Date signDate; // 가입날짜
+        @Column(name = "vip_level")
+        private int level; // 등급
+        private int point; // 포인트
+        private String provider; // 소셜
+        @Column(name = "provider_id")
+        private String providerId; // 해당 소셜에서의 아이디(primary key)
+        @Column(name = "device_token")
+        private String deviceToken;
 
 //    @Builder(builderMethodName = "updateInfo")
 //    public User(String email, String address, String addressDetail){

@@ -131,8 +131,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .loginPage("/loginForm") //이 줄을 지우면 스프링이 제공하는 폼이 출력됨.
 //                .loginProcessingUrl("/api/v1/login") // /login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인 진행.
                     .defaultSuccessUrl("/") // 로그인 성공하면 갈 주소.
-                    .permitAll()
-                .and()
+                    .permitAll();
 //                .oauth2Login()
 //                    .loginPage("/loginForm")
 //                    .userInfoEndpoint()
