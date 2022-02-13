@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.thymeleaf.util.StringUtils;
 
 
 import java.util.Date;
@@ -33,6 +32,7 @@ public class EmployeeServiceImpl implements BasicService<Employee, Employee.Requ
     @Autowired
     ShopServiceImpl shopService;
 
+
     @Override
     public Employee get(String authorization, String... str) {
         String shopId = str[0], empNo = str[1];
@@ -44,12 +44,14 @@ public class EmployeeServiceImpl implements BasicService<Employee, Employee.Requ
         shopService.isOwnShop(loginId, shopId);
         employee = isPresent(empId);
 
+
         return employee;
     }
 
     @Override
     public List<Employee> getList(@Nullable String authorization, String... str) {
         String shopId = str[0];
+
         String loginId = userService.getMyId(authorization);
 
         // 유효성 검사
