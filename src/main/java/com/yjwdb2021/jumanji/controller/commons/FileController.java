@@ -3,8 +3,6 @@ package com.yjwdb2021.jumanji.controller.commons;
 import com.yjwdb2021.jumanji.service.StorageServiceImpl;
 import com.yjwdb2021.jumanji.storage.StorageFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.annotation.Resource;
 import java.io.IOException;
+import java.net.http.HttpHeaders;
 import java.util.stream.Collectors;
 
 @Controller
@@ -51,16 +51,16 @@ public class FileController {
     @GetMapping("/shop/{shopId}/menu/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<?> loadMenuImg(@PathVariable String shopId, @PathVariable String fileName) {
-        Resource img = storageService.loadImg("files", "shop", shopId, "menu", fileName);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
+        javax.annotation.Resource img = storageService.loadImg("files", "shop", shopId, "menu", fileName);
+        return ResponseEntity.ok().header(java.net.http.HttpHeaders.CONTENT_TYPE,
                 "image/jpeg; filename=\"" + img.getFilename() + "\"").body(img);
     }
 
     @GetMapping("/shop/{shopId}/thumbnail/{fileName:.+}")
     @ResponseBody
     public ResponseEntity<?> loadThumbNail(@PathVariable String shopId, @PathVariable String fileName) {
-        Resource img = storageService.loadImg("files", "shop", shopId, "thumbNail", fileName);
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE,
+        javax.annotation.Resource img = storageService.loadImg("files", "shop", shopId, "thumbNail", fileName);
+        return ResponseEntity.ok().header(java.net.http.HttpHeaders.CONTENT_TYPE,
                 "image/jpeg; filename=\"" + img.getFilename() + "\"").body(img);
     }
 
@@ -97,7 +97,7 @@ public class FileController {
     @PostMapping(value={"", "/"})
     public String handleFileUpload(@RequestParam("file") MultipartFile file,
                                    RedirectAttributes redirectAttributes) {
-        storageService.store(file, "022344278\\test", "파일이름");
+        storageService.store(file, , "파일이름");
         redirectAttributes.addFlashAttribute("message",
                 "You successfully uploaded " + file.getOriginalFilename() + "!");
         return "redirect:/files";
